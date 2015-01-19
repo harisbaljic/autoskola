@@ -1,0 +1,64 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/LinearLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#bdc3c7"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:layout_marginTop="10dp"
+        >
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:gravity="center"
+            android:layout_height="wrap_content" >
+
+            <ImageButton
+                android:id="@+id/btnDodavanjeNoveVoznje_meni"
+
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:src="@drawable/add_user" android:scaleType="fitXY"/>
+
+            <ImageButton
+                android:id="@+id/btnPretragaVoznji_meni"
+
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:src="@drawable/search" android:scaleType="fitXY"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:gravity="center"
+            android:layout_height="wrap_content" >
+
+            <ImageButton
+                android:id="@+id/btnListaPrijava_meni"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/check_book" />
+
+            <ImageButton
+                android:id="@+id/btnVoznjeMapa_meni"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/map_marker" >
+
+            </ImageButton>
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</RelativeLayout>

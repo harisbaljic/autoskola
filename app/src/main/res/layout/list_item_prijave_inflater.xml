@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="70dp"
+    android:layout_margin="5dp"
+    android:background="@color/actionbar_10"
+    android:orientation="horizontal"
+    android:weightSum="10" >
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_weight="7"
+        android:padding="5dp" >
+
+        <TextView
+            android:id="@+id/list_item_prijava_inflater_kandidat"
+            android:layout_width="fill_parent"
+            android:layout_height="30dp"
+            android:fontFamily="sans-serif-condensed"
+            android:gravity="center_vertical"
+            android:singleLine="true"
+            android:text="Lorem ipsum"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/list_item_prijava_inflater_status"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:text="13h"
+            android:gravity="center_vertical"
+            android:textStyle="italic"
+            android:layout_alignBottom="@+id/list_item_prijava_inflater_datum"
+            android:layout_toRightOf="@+id/list_item_prijava_inflater_datum"
+            android:layout_toEndOf="@+id/list_item_prijava_inflater_datum" />
+
+
+        <TextView
+            android:id="@+id/list_item_prijava_datum_lbl"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_below="@id/list_item_prijava_inflater_kandidat"
+            android:text="Datum vožnje: "
+            android:textStyle="italic" />
+
+        <TextView
+            android:id="@+id/list_item_prijava_inflater_datum"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:text="11.01.2015."
+            android:textStyle="italic"
+            android:layout_alignBottom="@+id/list_item_prijava_datum_lbl"
+            android:layout_toRightOf="@+id/list_item_prijava_datum_lbl"
+            android:layout_toEndOf="@+id/list_item_prijava_datum_lbl" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/ButtonLayout"
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_weight="3"
+
+        android:background="@color/actionbar_10" >
+
+        <Button
+            android:id="@+id/list_item_prijava_inflater_btn_odobri"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:fontFamily="sans-serif-condensed"
+            android:gravity="center"
+            android:text="Odobri"
+            android:layout_alignParentRight="true"
+            android:textStyle="bold"
+            android:textSize="18sp"
+
+
+
+            />
+
+
+    </RelativeLayout>
+
+</LinearLayout>

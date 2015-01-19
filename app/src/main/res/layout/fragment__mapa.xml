@@ -1,0 +1,38 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <fragment
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        class="com.google.android.gms.maps.MapFragment"
+        tools:layout="@layout/fragment__mapa" />
+
+    <LinearLayout
+        android:id="@+id/LinearLayout2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="10dp"
+
+        >
+
+
+        <!-- android:background="#AEB2B4"-->
+        <ImageButton
+            android:id="@+id/btnGpsActivityStart"
+            android:layout_width="65dp"
+            android:layout_height="55dp"
+            android:layout_margin="5dp"
+            android:layout_gravity="right"
+            android:padding="5dp"
+            android:src="@drawable/komentar" />
+
+    </LinearLayout>
+
+
+
+</RelativeLayout>
