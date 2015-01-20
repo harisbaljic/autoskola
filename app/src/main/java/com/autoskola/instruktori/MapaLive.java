@@ -4,8 +4,12 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.autoskola.instruktori.gps.GpsTask;
+import com.autoskola.instruktori.map.MapHelper;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.CameraUpdateFactory;
 
 /**
  * Created by The Boss on 15.1.2015.
@@ -44,6 +48,9 @@ public class MapaLive extends Activity {
                         .show();
             }
         }
+
+        // Show current location on map
+        MapHelper.getInstance().setMapToLocation(GpsTask.getInstance().getCurrentGpsLocation(),googleMap);
     }
 
     @Override
@@ -51,6 +58,4 @@ public class MapaLive extends Activity {
         super.onResume();
         initilizeMap();
     }
-
-
 }
