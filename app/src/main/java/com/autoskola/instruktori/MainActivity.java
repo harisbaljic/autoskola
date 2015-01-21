@@ -13,10 +13,13 @@ import android.widget.RelativeLayout;
 
 import com.autoskola.instruktori.fragments.FragmentLogin;
 import com.autoskola.instruktori.fragments.FragmentObavijesti;
+import com.autoskola.instruktori.gps.GpsResponseHandler;
+import com.autoskola.instruktori.gps.GpsResponseTypes;
+import com.autoskola.instruktori.gps.GpsTask;
+import android.location.LocationManager;
 
 
-
-public class MainActivity extends Activity
+public class MainActivity extends Activity implements GpsResponseHandler
 {
 
     private RelativeLayout mainContainer;
@@ -33,6 +36,10 @@ public class MainActivity extends Activity
         supportFragmentManager = getFragmentManager();
         supportFragmentManager.beginTransaction().add(R.id.maincontainer,new FragmentObavijesti(),
                 FragmentObavijesti.class.getSimpleName()).commit();
+
+        // Init gps location manager
+        GpsTask.getInstance().initGpsManager(this,LocationManager.NETWORK_PROVIDER);
+        GpsTask.getInstance().getCurrentGpsLocation();
     }
 
     @Override
@@ -40,8 +47,6 @@ public class MainActivity extends Activity
         Log.d("Korisnik", "onResume()");
         super.onResume();
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -71,10 +76,12 @@ public class MainActivity extends Activity
             item.setVisible(false);
 
         }
-
-
-
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onGpsResponse(GpsResponseTypes responseType) {
+        System.out.println("Gps response type:"+responseType);
+        GpsTask.getInstance().showMessage("Type:"+responseType);
+    }
 }
