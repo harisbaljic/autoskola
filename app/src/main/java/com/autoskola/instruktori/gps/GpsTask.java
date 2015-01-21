@@ -2,6 +2,7 @@ package com.autoskola.instruktori.gps;
 import android.location.LocationManager;
 import android.content.Context;
 import android.location.Location;
+import android.widget.Toast;
 
 /**
  * Created by haris on 1/20/15.
@@ -26,6 +27,9 @@ public class GpsTask {
      */
     private String LOCATION_PROVIDER = LocationManager.NETWORK_PROVIDER;
 
+    // GPS - Network state listener
+    public GpsResponseHandler communicatorInterface;
+
     /**
      * This is singleton instance for this class
      */
@@ -39,6 +43,9 @@ public class GpsTask {
      * This function is used to init GPS location manager and set GPS provider
      */
     public void initGpsManager (Context context, String provider){
+        // Set network/gps state listener
+        this.communicatorInterface = (GpsResponseHandler)context;
+
         // Set provider
         this.LOCATION_PROVIDER = provider;
 
@@ -51,10 +58,13 @@ public class GpsTask {
     private GpsTask() {
     }
 
-    public void getCurrentGpsLocation (){
+    public Location getCurrentGpsLocation (){
         // Get current location if available
         Location location = mLocationManager.getLastKnownLocation(LOCATION_PROVIDER);
-        System.out.println("Latitude:"+location.getLatitude());
-        System.out.println("Longitude:"+location.getLongitude());
+        return location;
+    }
+
+    public void showMessage(String message){
+        Toast.makeText((Context)this.communicatorInterface,message,Toast.LENGTH_SHORT).show();
     }
 }
