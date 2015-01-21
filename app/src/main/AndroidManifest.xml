@@ -37,7 +37,13 @@
         android:theme="@style/AppTheme" >
 
         <meta-data android:name="com.google.android.maps.v2.API_KEY"
-                   android:value="AIzaSyCAs1Hou8XZboXYKTBGfNnRMMMZYUWTb2s"/>
+                   android:value="AIzaSyAYzrSr9D-DAX3j07SPPzevAk1LEmjYj5k"/>
+
+        <receiver android:name="com.autoskola.instruktori.helpers.NetworkStateReceiver" >
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
 
         <activity
             android:name=".MainActivity"
