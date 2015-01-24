@@ -11,5 +11,12 @@ public enum GpsResponseTypes {
      */
     WI_FI_CONNECTION,
     MOBILE_CONNECTION,
-    NO_INTERNET_CONNECTION
+    NO_INTERNET_CONNECTION,
+
+
+    /**
+     * GPS offline data synchronization
+     */
+    GPS_SYNC_SUCCESS,
+    GPS_SYNC_FAIL
 }
