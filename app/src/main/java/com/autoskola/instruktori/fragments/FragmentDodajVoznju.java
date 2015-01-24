@@ -26,6 +26,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 
 public class FragmentDodajVoznju extends Fragment {
     private ListView list;
@@ -98,6 +100,30 @@ public class FragmentDodajVoznju extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 System.out.println("Position:"+position);
+
+                new SweetAlertDialog(parent.getContext(), SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText("Da li si siguran?")
+                        .setContentText("Da li zelis da krene pracenje voznje?")
+                        .setConfirmText("Da!")
+                        .showCancelButton(true)
+                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sDialog) {
+                                sDialog.cancel();
+                            }
+                        })
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sDialog) {
+                                sDialog
+                                        .setTitleText("Odobreno!")
+                                        .setContentText("Kretanje mozete pratiti na mapi.")
+                                        .setConfirmText("Uredu")
+                                        .setConfirmClickListener(null)
+                                        .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                            }
+                        })
+                        .show();
             }
         });
     }
