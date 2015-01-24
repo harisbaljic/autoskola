@@ -143,11 +143,13 @@ public class GpsTask {
             @Override
             public void success(List<GpsInfo> aBoolean, Response response) {
                 System.out.println("POST GpsInfo - success");
+                GpsTask.getInstance().communicatorInterface.onGpsResponse(GpsResponseTypes.GPS_SYNC_SUCCESS);
             }
 
             @Override
             public void failure(RetrofitError error) {
                 System.out.println("POST GpsInfo - fail:"+error);
+                GpsTask.getInstance().communicatorInterface.onGpsResponse(GpsResponseTypes.GPS_SYNC_FAIL);
             }
         };
 
