@@ -6,10 +6,11 @@ import io.realm.RealmObject;
  * Created by haris on 1/24/15.
  */
 public class GpsInfo extends RealmObject{
+
     private String voznjaId;
     private String detaljiVoznjeId;
-    private double longitude;
-    private double latitude;
+    private String longitude;
+    private String latitude;
 
     public String getVoznjaId() {
         return voznjaId;
@@ -27,19 +28,20 @@ public class GpsInfo extends RealmObject{
         this.detaljiVoznjeId = detaljiVoznjeId;
     }
 
-    public double getLongitude() {
-        return longitude;
+    public String getLongitude() {
+        return this.longitude;
     }
 
-    public void setLongitude(double longitude) {
+    public void setLongitude(String longitude) {
         this.longitude = longitude;
     }
 
-    public double getLatitude() {
-        return latitude;
+    public String getLatitude() {
+        return this.latitude;
     }
 
-    public void setLatitude(double latitude) {
+    public void setLatitude(String latitude) {
         this.latitude = latitude;
     }
+
 }
