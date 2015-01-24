@@ -21,6 +21,5 @@ public interface GpsWebService {
 
     // http://projekt001.app.fit.ba/autoskola/postArrayTest.php
     @POST("/postArrayTest.php")
-    void createGpsInfo(@Body List<GpsInfo> info,Callback<List<GpsInfo>> cb);
-
+    void postGpsInfo(@Body List<GpsInfo> info,Callback<List<GpsInfo>> cb);
 }
