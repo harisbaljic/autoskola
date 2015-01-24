@@ -1,8 +1,14 @@
 package com.autoskola.instruktori.gps;
-import android.location.LocationManager;
+
 import android.content.Context;
 import android.location.Location;
+import android.location.LocationManager;
 import android.widget.Toast;
+
+import com.autoskola.instruktori.services.model.GpsInfo;
+
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 /**
  * Created by haris on 1/20/15.
@@ -67,4 +73,42 @@ public class GpsTask {
     public void showMessage(String message){
         Toast.makeText((Context)this.communicatorInterface,message,Toast.LENGTH_SHORT).show();
     }
+
+    // Save gps info object  to local db
+    public void saveOffline (Context context,GpsInfo gpsObject){
+        // Get realm instance
+        Realm realm = Realm.getInstance(context);
+
+        // Begin db transactions
+        realm.beginTransaction();
+        GpsInfo realmObject = realm.createObject(GpsInfo.class);
+        realmObject.setDetaljiVoznjeId(gpsObject.getDetaljiVoznjeId());
+        realmObject.setVoznjaId(gpsObject.getVoznjaId());
+        realmObject.setLatitude(gpsObject.getLatitude());
+        realmObject.setLongitude(gpsObject.getLongitude());
+
+        // Save to db
+        realm.commitTransaction();
+    }
+
+    // Get all gps info objects by voznjaId
+    public void   getAllOfflineObjects(final String voznjaId,final Context context){
+
+        new Thread(new Runnable() {
+            public void run() {
+
+                Realm realm = Realm.getInstance(context);
+                RealmResults<GpsInfo> gpsList = realm.where(GpsInfo.class)
+                        .equalTo("voznjaId",voznjaId)
+                        .findAll();
+
+                for (int i = 0; i <gpsList.size() ; i++) {
+                    System.out.println("Offline objects:"+gpsList.get(i).getLatitude());
+                }
+
+
+            }
+        }).start();
+    }
+    
 }
