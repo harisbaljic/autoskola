@@ -5,10 +5,17 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.widget.Toast;
 
+import com.autoskola.instruktori.services.GpsWebService;
 import com.autoskola.instruktori.services.model.GpsInfo;
+
+import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
+import retrofit.Callback;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * Created by haris on 1/20/15.
@@ -105,10 +112,46 @@ public class GpsTask {
                 for (int i = 0; i <gpsList.size() ; i++) {
                     System.out.println("Offline objects:"+gpsList.get(i).getLatitude());
                 }
-
-
             }
         }).start();
     }
-    
+
+    // Sync local db to server
+    public void syncGpsData (final Context context){
+
+        new Thread(new Runnable() {
+            public void run() {
+                Realm realm = Realm.getInstance(context);
+                RealmResults<GpsInfo> gpsList = realm.where(GpsInfo.class).findAll();
+                postGpsData(gpsList);
+            }
+        }).start();
+    }
+
+    public void postGpsData (List<GpsInfo> gpsData){
+
+        // Set endpoint
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setEndpoint("http://projekt001.app.fit.ba/autoskola")
+                .build();
+
+        // Generate service
+        GpsWebService service = restAdapter.create(GpsWebService.class);
+
+        // Callback
+        Callback<List<GpsInfo>> callback = new Callback<List<GpsInfo>>() {
+            @Override
+            public void success(List<GpsInfo> aBoolean, Response response) {
+                System.out.println("POST GpsInfo - success");
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                System.out.println("POST GpsInfo - fail:"+error);
+            }
+        };
+
+        // POST request
+        service.postGpsInfo(gpsData, callback);
+    }
 }
