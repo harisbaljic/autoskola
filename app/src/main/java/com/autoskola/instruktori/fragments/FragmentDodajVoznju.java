@@ -1,13 +1,12 @@
 package com.autoskola.instruktori.fragments;
 
-import android.app.Activity;
-import android.net.Uri;
-import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.android.volley.Request;
@@ -15,7 +14,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.autoskola.instruktori.R;
-import com.autoskola.instruktori.adapters.PrijaveAdapter;
 import com.autoskola.instruktori.adapters.VoznjeAdapter;
 import com.autoskola.instruktori.helpers.AppController;
 import com.autoskola.instruktori.helpers.Helper;
@@ -91,5 +89,16 @@ public class FragmentDodajVoznju extends Fragment {
 
         AppController.getInstance().addToRequestQueue(getAktivnePrijaveRequest);
 
+        // ListView item on click listener
+        setListOnClickListener();
+    }
+
+    private void setListOnClickListener (){
+        this.list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                System.out.println("Position:"+position);
+            }
+        });
     }
 }
