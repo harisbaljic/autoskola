@@ -25,7 +25,7 @@ public class GpsWebServiceTest {
     private GpsWebServiceTest() {
     }
 
-    public void testPostGpsInfo (List<GpsInfo>gpsData){
+    public void testPostData (List<GpsInfo>gpsData){
 
         // Set endpoint
         RestAdapter restAdapter = new RestAdapter.Builder()
@@ -52,7 +52,7 @@ public class GpsWebServiceTest {
         service.postGpsInfo(gpsData, callback);
     }
 
-    private void testGetGpsInfo(String voznjaId){
+    private void testGetGpsData(String voznjaId){
         // Set endpoint
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint("http://projekt001.app.fit.ba/autoskola")
