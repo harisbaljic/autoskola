@@ -3,7 +3,9 @@ package com.autoskola.instruktori.gps;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Bundle;
 import android.widget.Toast;
 
 import com.autoskola.instruktori.services.GpsWebService;
@@ -27,6 +29,7 @@ public class GpsTask {
 
     // Location manager
     private LocationManager mLocationManager;
+    private LocationListener locationListener;
 
     /**
      * NETWORK_PROVIDER - Name of the network location provider.
@@ -67,6 +70,38 @@ public class GpsTask {
         // Init location manager
         if (GpsTask.getInstance().mLocationManager == null) {
             mLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        }
+
+        // Init location listener
+        locationListener = new GpsLocationListener();
+        LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 35000, 10, this.locationListener);
+    }
+
+    private final class GpsLocationListener implements LocationListener {
+
+        @Override
+        public void onLocationChanged(Location locFromGps) {
+            // called when the listener is notified with a location update from the GPS
+            showMessage("Lat:"+locFromGps.getLatitude() + "Lng:"+locFromGps.getLongitude());
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+            // called when the GPS provider is turned off (user turning off the GPS on the phone)
+            showMessage("GPS Provider is turned off");
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+            // called when the GPS provider is turned on (user turning on the GPS on the phone)
+            showMessage("GPS Provider is turned on");
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            // called when the status of the GPS provider changes
+            showMessage("GPS status changed:"+status);
         }
     }
 
