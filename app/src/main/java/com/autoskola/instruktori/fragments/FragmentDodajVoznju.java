@@ -128,7 +128,7 @@ public class FragmentDodajVoznju extends Fragment {
                     // Gps task is active
                     // Check if selected objects in preference
                     Prijava selectedPrijava = items.get(position);
-                    if(GpsTask.getInstance().getAktivnaPrijava(parent.getContext()).VoznjaId == selectedPrijava.VoznjaId){
+                    if(GpsTask.getInstance().getAktivnaPrijava(parent.getContext()).VoznjaId.matches(selectedPrijava.VoznjaId)){
 
                         new SweetAlertDialog(parent.getContext(), SweetAlertDialog.WARNING_TYPE)
                                 .setTitleText("Da li si siguran?")

@@ -7,7 +7,7 @@ import com.google.gson.Gson;
  */
 public class Prijava{
 
-    public int VoznjaId;
+    public String VoznjaId;
     public Datum DatumPrijave;
     public int KandidatId;
     public  Datum DatumVoznje;

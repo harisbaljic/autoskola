@@ -45,7 +45,7 @@ public class VoznjeAdapter extends BaseAdapter {
         }
 
         if (GpsTask.getInstance().getAktivnaPrijava(activity)!=null){
-            if (GpsTask.getInstance().getAktivnaPrijava(activity).VoznjaId == prijaveList.get(position).VoznjaId)
+            if (GpsTask.getInstance().getAktivnaPrijava(activity).VoznjaId.matches(prijaveList.get(position).VoznjaId))
                 convertView.setBackgroundColor(activity.getResources().getColor(R.color.turquoise));
             else
                 convertView.setBackgroundColor(activity.getResources().getColor(R.color.clouds));
