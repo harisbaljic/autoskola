@@ -1,5 +1,6 @@
 package com.autoskola.instruktori.map;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.location.Location;
 
@@ -7,7 +8,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.List;
@@ -46,20 +46,27 @@ public class MapHelper {
         map.animateCamera(CameraUpdateFactory.zoomTo(15));
     }
 
-    public void drawMapRoute (List<LatLng> routes,GoogleMap googleMap){
+    public void drawMapRoute (final List<LatLng> routes,final GoogleMap googleMap, Activity context){
 
         if (googleMap != null) {
-            // Add map makers
-            for (int i = 0; i<routes.size(); i++){
-               googleMap.addMarker(new MarkerOptions().position(routes.get(i))
-                        .title("First Point"));
-            }
+            context.runOnUiThread(new Runnable() {
+                    @Override
 
-            // Add lines on map
-            Polyline line = googleMap.addPolyline(new PolylineOptions()
-                    .addAll(routes)
-                    .width(5)
-                    .color(Color.RED));
+                    public void run() {
+                        if (routes.size()>0)
+                        // Add map makers
+                        googleMap.addMarker(new MarkerOptions().position(routes.get(0))
+                                .title("First Point"));
+
+                        // Add lines on map
+                        googleMap.addPolyline(new PolylineOptions()
+                                .addAll(routes)
+                                .width(5)
+                                .color(Color.RED));
+
+                    }
+                });
+
         }
     }
 
