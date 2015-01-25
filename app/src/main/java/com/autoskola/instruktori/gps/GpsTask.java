@@ -1,12 +1,14 @@
 package com.autoskola.instruktori.gps;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
 import android.widget.Toast;
 
 import com.autoskola.instruktori.services.GpsWebService;
 import com.autoskola.instruktori.services.model.GpsInfo;
+import com.autoskola.instruktori.services.model.Prijava;
 
 import java.util.List;
 
@@ -155,5 +157,27 @@ public class GpsTask {
 
         // POST request
         service.postGpsInfo(gpsData, callback);
+    }
+
+    // Save aktivna prijava to preference
+    public void startGPSTask(Prijava prijava,Context context){
+        SharedPreferences.Editor editor = context.getSharedPreferences("AppSharedPereferences",Context.MODE_PRIVATE ).edit();
+        editor.putString("AktivnaPrijava", prijava.convertToJson());
+        editor.commit();
+    }
+
+    // Remove aktivna prijava from preference
+    public void stopGpsTask(Context context){
+        SharedPreferences.Editor editor = context.getSharedPreferences("AppSharedPereferences",Context.MODE_PRIVATE ).edit();
+        editor.putString("AktivnaPrijava",null);
+        editor.commit();
+    }
+
+
+    // Get aktivna prijava from preferene
+    public Prijava getAktivnaPrijava (Context context){
+        SharedPreferences prefs = context.getSharedPreferences("AppSharedPereferences",Context.MODE_PRIVATE);
+        String prijava_json = prefs.getString("AktivnaPrijava", null);
+        return new Prijava().convertFromJson(prijava_json);
     }
 }
