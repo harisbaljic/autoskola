@@ -3,7 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="70dp"
     android:layout_margin="5dp"
-    android:background="@color/actionbar_10"
+    android:background="@color/clouds"
     android:orientation="horizontal"
     android:weightSum="10" >
 
