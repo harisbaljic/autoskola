@@ -76,6 +76,9 @@
             android:screenOrientation="portrait" >
         </activity>
 
+        <meta-data
+            android:name="com.crashlytics.ApiKey"
+            android:value="19a7e0b02c720f82a98d98d0d491af85bcf918d4" />
     </application>
 
 </manifest>
