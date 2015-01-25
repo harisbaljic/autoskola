@@ -47,6 +47,7 @@ public class GpsTask {
 
     // GPS - Network state listener
     public GpsResponseHandler communicatorInterface;
+    public GpsResponseHandler communicatorInterfaceMap;
 
     /**
      * This is singleton instance for this class
@@ -73,17 +74,33 @@ public class GpsTask {
         }
 
         // Init location listener
-        locationListener = new GpsLocationListener();
+        locationListener = new GpsLocationListener(context);
         LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 35000, 10, this.locationListener);
     }
 
     private final class GpsLocationListener implements LocationListener {
 
+        private Context context;
+        public  GpsLocationListener (Context context){
+            this.context = context;
+        }
+
         @Override
         public void onLocationChanged(Location locFromGps) {
             // called when the listener is notified with a location update from the GPS
             showMessage("Lat:"+locFromGps.getLatitude() + "Lng:"+locFromGps.getLongitude());
+            if (getAktivnaPrijava(context)!=null){
+                GpsInfo info = new GpsInfo();
+                info.setVoznjaId(getAktivnaPrijava(context).VoznjaId);
+                info.setLatitude(String.valueOf(locFromGps.getLatitude()));
+                info.setLongitude(String.valueOf(locFromGps.getLongitude()));
+                GpsTask.getInstance().saveOffline(context,info);
+                communicatorInterfaceMap.onGpsResponse(GpsResponseTypes.GPS_LOCATION_CHANGED);
+            }
+            else
+                showMessage("Lokacija je promjenjena, ali nema aktivnih prijava");
+
         }
 
         @Override
@@ -126,7 +143,7 @@ public class GpsTask {
         // Begin db transactions
         realm.beginTransaction();
         GpsInfo realmObject = realm.createObject(GpsInfo.class);
-        realmObject.setDetaljiVoznjeId(gpsObject.getDetaljiVoznjeId());
+        realmObject.setDetaljiVoznjeId("");
         realmObject.setVoznjaId(gpsObject.getVoznjaId());
         realmObject.setLatitude(gpsObject.getLatitude());
         realmObject.setLongitude(gpsObject.getLongitude());
@@ -146,9 +163,7 @@ public class GpsTask {
                         .equalTo("voznjaId",voznjaId)
                         .findAll();
 
-                for (int i = 0; i <gpsList.size() ; i++) {
-                    System.out.println("Offline objects:"+gpsList.get(i).getLatitude());
-                }
+
             }
         }).start();
     }
