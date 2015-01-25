@@ -8,7 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.autoskola.instruktori.R;
-import com.autoskola.instruktori.model.Prijava;
+import com.autoskola.instruktori.gps.GpsTask;
+import com.autoskola.instruktori.services.model.Prijava;
 
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class VoznjeAdapter extends BaseAdapter {
 
     private Activity activity;
     private List<Prijava> prijaveList;
+
 
 
     public VoznjeAdapter(Activity activity, List<Prijava> prijaveList) {
@@ -42,17 +44,27 @@ public class VoznjeAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
+        if (GpsTask.getInstance().getAktivnaPrijava(activity)!=null){
+            if (GpsTask.getInstance().getAktivnaPrijava(activity).VoznjaId == prijaveList.get(position).VoznjaId)
+                convertView.setBackgroundColor(activity.getResources().getColor(R.color.turquoise));
+            else
+                convertView.setBackgroundColor(activity.getResources().getColor(R.color.clouds));
+        }
+        else
+            convertView.setBackgroundColor(activity.getResources().getColor(R.color.clouds));
+
+
       /*  if (prijaveList.get(position).getDatumPrijave() != null)
             viewHolder.datum.setText(Helper.parseToFullDate(prijaveList.get(position).getDatumPrijave().toString())); */
 
-        if (prijaveList.get(position).getIme() != null || prijaveList.get(position).getPrezime() != null)
+        if (prijaveList.get(position).Ime != null || prijaveList.get(position).Prezime != null)
         {
-            viewHolder.kandidat.setText(prijaveList.get(position).getIme() + prijaveList.get(position).getPrezime());
+            viewHolder.kandidat.setText(prijaveList.get(position).Ime + prijaveList.get(position).Prezime);
         }
 
-        if (prijaveList.get(position).getVrijemeVoznje() !=null)
+        if (prijaveList.get(position).VrijemeVoznje !=null)
         {
-            viewHolder.vrijeme.setText(prijaveList.get(position).getVrijemeVoznje() + prijaveList.get(position).getVrijemeVoznje());
+            viewHolder.vrijeme.setText(prijaveList.get(position).VrijemeVoznje + prijaveList.get(position).VrijemeVoznje);
         }
         /*if(uplateList.get(position).getDatum() != null)
             viewHolder.datum.setText(uplateList.get(position).getDatum());*/
