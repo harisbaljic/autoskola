@@ -18,5 +18,9 @@ public enum GpsResponseTypes {
      * GPS offline data synchronization
      */
     GPS_SYNC_SUCCESS,
-    GPS_SYNC_FAIL
+    GPS_SYNC_FAIL,
+
+
+    // GPS LOCATION CHANGE
+    GPS_LOCATION_CHANGED
 }
