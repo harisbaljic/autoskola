@@ -2,6 +2,12 @@ package com.autoskola.instruktori;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.InflateException;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.autoskola.instruktori.gps.GpsResponseHandler;
@@ -22,20 +28,35 @@ import io.realm.RealmResults;
 /**
  * Created by The Boss on 15.1.2015.
  */
-public class MapaLive extends Activity implements GpsResponseHandler {
+public class MapaLive extends Fragment implements GpsResponseHandler {
 
+    private static View view;
     private GoogleMap googleMap;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment__mapa);
-        GpsTask.getInstance().communicatorInterfaceMap=this;
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        if (view != null) {
+            ViewGroup parent = (ViewGroup) view.getParent();
+            if (parent != null)
+                parent.removeView(view);
+        }
+        try {
+            view = inflater.inflate(R.layout.fragment__mapa, container, false);
+        } catch (InflateException e) {
+        /* map is already there, just return view as it is */
+        }
+        return view;
+    }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        GpsTask.getInstance().communicatorInterfaceMap=this;
         try {
             // Loading map
             initilizeMap();
-            updateMap(this);
+            updateMap(getActivity());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -47,14 +68,13 @@ public class MapaLive extends Activity implements GpsResponseHandler {
      * */
     private void initilizeMap() {
         if (googleMap == null) {
-            googleMap = ((MapFragment) getFragmentManager().findFragmentById(
-                    R.id.map)).getMap();
+            googleMap = ((MapFragment)getActivity().getFragmentManager().findFragmentById(R.id.map)).getMap();
 
             //googleMap.setMyLocationEnabled(true);
 
             // check if map is created successfully or not
             if (googleMap == null) {
-                Toast.makeText(getApplicationContext(),
+                Toast.makeText(getActivity(),
                         "Sorry! unable to create maps", Toast.LENGTH_SHORT)
                         .show();
             }
@@ -64,27 +84,22 @@ public class MapaLive extends Activity implements GpsResponseHandler {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
     public void onGpsResponse(GpsResponseTypes responseType) {
       if(responseType == GpsResponseTypes.GPS_LOCATION_CHANGED){
           // Update map
-         updateMap(this);
+         updateMap(getActivity());
       }
    }
 
   private void updateMap (final Activity activity){
       // Check for active prijava
-      if (GpsTask.getInstance().getAktivnaPrijava(getBaseContext())!=null) {
+      if (GpsTask.getInstance().getAktivnaPrijava(activity.getBaseContext())!=null) {
           new Thread(new Runnable() {
               public void run() {
 
-                  Realm realm = Realm.getInstance(getBaseContext());
+                  Realm realm = Realm.getInstance(activity.getBaseContext());
                   RealmResults<GpsInfo> gpsList = realm.where(GpsInfo.class)
-                          .equalTo("voznjaId", GpsTask.getInstance().getAktivnaPrijava(getBaseContext()).VoznjaId)
+                          .equalTo("voznjaId", GpsTask.getInstance().getAktivnaPrijava(activity.getBaseContext()).VoznjaId)
                           .findAll();
 
 
