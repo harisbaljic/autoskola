@@ -1,6 +1,5 @@
 package com.autoskola.instruktori.fragments;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,7 +25,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class FragmentDodajVoznju extends Fragment {
+public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
 
     private ListView list;
     private List<Prijava> items = new ArrayList<Prijava>();
@@ -146,8 +145,8 @@ public class FragmentDodajVoznju extends Fragment {
                                     @Override
                                     public void onClick(SweetAlertDialog sDialog) {
                                         sDialog
-                                                .setTitleText("Novo pracenje je zapocelo!")
-                                                .setContentText("Kretanje mozete pratiti na mapi.")
+                                                .setTitleText("Info!")
+                                                .setContentText("Voznja je zavrsena!.")
                                                 .setConfirmText("Uredu")
                                                 .setConfirmClickListener(null)
                                                 .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
