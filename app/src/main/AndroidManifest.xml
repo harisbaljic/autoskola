@@ -68,11 +68,6 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen" >
         </activity>
-        <activity
-            android:name=".NaslovnicaActivity"
-            android:label="@string/title_activity_main"
-            android:screenOrientation="portrait" >
-        </activity>
 
         <meta-data
             android:name="com.crashlytics.ApiKey"
