@@ -6,6 +6,7 @@ package com.autoskola.instruktori.model;
 public class Voznja {
 
     int VoznjaId, InstruktorId, PrijavaId;
+    int Status;
     Datum PocetakVoznje;
 
 
@@ -21,6 +22,14 @@ public class Voznja {
     public Voznja (){
 
 
+    }
+
+    public int getStatus() {
+        return Status;
+    }
+
+    public void setStatus(int status) {
+        Status = status;
     }
 
     public int getVoznjaId() {
