@@ -37,16 +37,19 @@ android {
 dependencies {
     compile files('libs/android-async-http-1.4.6.jar')
     compile files('libs/volley.jar')
-    compile 'com.android.support:appcompat-v7:21.0.0'
     compile 'com.google.code.gson:gson:2.3'
-    compile 'com.android.support:appcompat-v7:21.0.3'
+    compile "com.android.support:appcompat-v7:21.0.+"
     compile 'com.android.support:support-annotations:21.0.3'
     compile 'com.android.support:support-v4:21.0.3'
     compile 'com.google.android.gms:play-services:6.5.87'
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile 'io.realm:realm-android:0.72.0'
     compile 'cn.pedant.sweetalert:library:1.3'
+    compile 'com.squareup.picasso:picasso:2.4.0'
+
     compile('com.crashlytics.sdk.android:crashlytics:2.2.0@aar') {
         transitive = true;
     }
+
+
 }
