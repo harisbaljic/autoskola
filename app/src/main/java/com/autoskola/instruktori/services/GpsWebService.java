@@ -1,6 +1,7 @@
 package com.autoskola.instruktori.services;
 
 import com.autoskola.instruktori.services.model.GpsInfo;
+import com.autoskola.instruktori.services.model.Komentar;
 
 import java.util.List;
 
@@ -22,4 +23,12 @@ public interface GpsWebService {
     // http://projekt001.app.fit.ba/autoskola/postArrayTest.php
     @POST("/postArrayTest.php")
     void postGpsInfo(@Body List<GpsInfo> info,Callback<List<GpsInfo>> cb);
+
+    @POST("/servis_InsertKomentar.php")
+    void postGpsKomentar (@Body List<Komentar> info,Callback<List<Komentar>> cb);
+
+   // http://projekt001.app.fit.ba/autoskola/servis_getKomentar.php?voznjaID=1
+   @GET("/servis_getKomentar.php")
+   void getGpsKomentar(@Query("voznjaID") String voznjaId, Callback<List<Komentar>> cb);
+
 }
