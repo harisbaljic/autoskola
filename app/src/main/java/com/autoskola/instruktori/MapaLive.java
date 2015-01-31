@@ -1,6 +1,8 @@
 package com.autoskola.instruktori;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -8,19 +10,27 @@ import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.Toast;
 
+import com.autoskola.instruktori.adapters.CommentAdapter;
 import com.autoskola.instruktori.gps.GpsResponseHandler;
 import com.autoskola.instruktori.gps.GpsResponseTypes;
 import com.autoskola.instruktori.gps.GpsTask;
 import com.autoskola.instruktori.map.MapHelper;
 import com.autoskola.instruktori.services.model.GpsInfo;
+import com.autoskola.instruktori.services.model.Komentar;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -28,10 +38,13 @@ import io.realm.RealmResults;
 /**
  * Created by The Boss on 15.1.2015.
  */
-public class MapaLive extends Fragment implements GpsResponseHandler {
+public class MapaLive extends Fragment implements GpsResponseHandler,View.OnClickListener {
 
     private static View view;
     private GoogleMap googleMap;
+    private ImageButton mBtnNewComment;
+    private ListView mListViewComments;
+    private CommentAdapter mCommentAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -46,6 +59,9 @@ public class MapaLive extends Fragment implements GpsResponseHandler {
         } catch (InflateException e) {
         /* map is already there, just return view as it is */
         }
+        mBtnNewComment = (ImageButton)view.findViewById(R.id.btnAddNewComment);
+        mBtnNewComment.setOnClickListener(this);
+        mListViewComments = (ListView)view.findViewById(R.id.listViewComments);
         return view;
     }
 
@@ -88,6 +104,8 @@ public class MapaLive extends Fragment implements GpsResponseHandler {
       if(responseType == GpsResponseTypes.GPS_LOCATION_CHANGED){
           // Update map
          updateMap(getActivity());
+      } else if (responseType == GpsResponseTypes.NEW_COMMENT){
+          updateCommentsListView();
       }
    }
 
@@ -115,6 +133,69 @@ public class MapaLive extends Fragment implements GpsResponseHandler {
               }
           }).start();
       }
+    }
 
+    @Override
+    public void onClick(View v) {
+
+        if (v== mBtnNewComment){
+            AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+            alert.setTitle("Novi komentar");
+            alert.setMessage("Upisi novi komentar");
+            final EditText input = new EditText(getActivity());
+            alert.setView(input);
+
+            alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+
+                    if (GpsTask.getInstance().getAktivnaPrijava(getActivity().getBaseContext())!=null) {
+                        Komentar komentar = new Komentar();
+                        komentar.setVoznjaId(GpsTask.getInstance().getAktivnaPrijava(getActivity()).VoznjaId);
+                        komentar.setOpis(input.getText().toString());
+
+                        // Date
+                        SimpleDateFormat f = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
+                        f.setTimeZone(TimeZone.getTimeZone("UTC"));
+                        String utcDate = f.format(new Date());
+
+                        komentar.setDatum(utcDate);
+                        komentar.setLtd("1");
+                        komentar.setLng("1");
+
+                        addNewComment(komentar);
+                    }
+                    else
+                        GpsTask.getInstance().showMessage("Ne mozes dodati komentar jer nema aktivne voznje...");
+
+                }
+            });
+
+            alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    // Canceled.
+                }
+            });
+
+            alert.show();
+
+        }
+    }
+
+    private void addNewComment(Komentar comment) {
+        // Save to local db
+        GpsTask.getInstance().saveCommentOffline(getActivity(), comment);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateCommentsListView();
+    }
+
+    private void updateCommentsListView (){
+        if (GpsTask.getInstance().getAktivnaPrijava(getActivity().getBaseContext())!=null) {
+            GpsTask.getInstance().showAllOfflineComments(GpsTask.getInstance().getAktivnaPrijava(getActivity().getBaseContext()).VoznjaId,getActivity(),mListViewComments);
+        }
     }
 }
+
