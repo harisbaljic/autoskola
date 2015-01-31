@@ -1,11 +1,14 @@
 package com.autoskola.instruktori.services;
 
+import com.autoskola.instruktori.model.Voznja;
 import com.autoskola.instruktori.services.model.Prijava;
 
 import java.util.List;
 
 import retrofit.Callback;
+import retrofit.http.Body;
 import retrofit.http.GET;
+import retrofit.http.POST;
 import retrofit.http.Query;
 
 /**
@@ -21,4 +24,6 @@ public interface PrijavaWebService {
     @GET("/servis_InstruktorZavrseneVoznje.php")
     void getZavrseneVoznje(@Query("instruktorId") String instruktorId, Callback<List<Prijava>> cb);
 
+    @POST("/servis_VoznjeUpdate.php")
+    void updateVoznje (@Body Voznja info,Callback<Voznja> cb);
 }
