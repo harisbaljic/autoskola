@@ -12,6 +12,7 @@ import com.autoskola.instruktori.R;
 import com.autoskola.instruktori.adapters.VoznjeAdapter;
 import com.autoskola.instruktori.gps.GpsTask;
 import com.autoskola.instruktori.helpers.AppController;
+import com.autoskola.instruktori.model.Voznja;
 import com.autoskola.instruktori.services.PrijavaWebService;
 import com.autoskola.instruktori.services.model.Prijava;
 
@@ -52,6 +53,15 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
         setListOnClickListener();
     }
 
+    private void refreshAktivnePrijave (){
+
+        // Instruktor id
+        String korisnikId = AppController.getInstance().getKorisnik().getKorisnikId();
+
+        // Get all aktivne prijave
+        getAktivnePrijave(korisnikId);
+    }
+
     public void getAktivnePrijave(String instruktorId){
         // Set endpoint
         RestAdapter restAdapter = new RestAdapter.Builder()
@@ -66,7 +76,7 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
             @Override
             public void success(List<com.autoskola.instruktori.services.model.Prijava> prijave, Response response) {
                 Log.d("GET Aktivne prijave - success:","");
-                items.addAll(prijave);
+                items = new ArrayList<>(prijave);
                 adapter = new VoznjeAdapter(getActivity(), items);
                 list.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
@@ -126,7 +136,7 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
 
                     // Gps task is active
                     // Check if selected objects in preference
-                    Prijava selectedPrijava = items.get(position);
+                    final Prijava selectedPrijava = items.get(position);
                     if(GpsTask.getInstance().getAktivnaPrijava(parent.getContext()).VoznjaId.matches(selectedPrijava.VoznjaId)){
 
                         new SweetAlertDialog(parent.getContext(), SweetAlertDialog.WARNING_TYPE)
@@ -154,6 +164,17 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
                                         // Stop gps task
                                         GpsTask.getInstance().stopGpsTask(parent.getContext());
                                         adapter.notifyDataSetChanged();
+
+                                        // Update voznje
+                                        Voznja voznja = new Voznja();
+                                        voznja.setVoznjaId(Integer.valueOf(selectedPrijava.VoznjaId));
+                                        voznja.setStatus(1);
+                                        updateVoznje(voznja);
+
+                                        // Sync comments
+                                        GpsTask.getInstance().syncComments(getActivity());
+
+
 
                                     }
                                 })
@@ -200,5 +221,35 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
 
             }
         });
+    }
+
+    private void updateVoznje (Voznja voznja){
+
+
+        // Set endpoint
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setEndpoint("http://projekt001.app.fit.ba/autoskola")
+                .build();
+
+        // Generate service
+        PrijavaWebService service = restAdapter.create(PrijavaWebService.class);
+
+        // Callback
+        Callback<Voznja> callback = new Callback<Voznja>() {
+            @Override
+            public void success(Voznja prijave, Response response) {
+                Log.d("Update voznje - success:", "");
+                refreshAktivnePrijave();
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.d("Update voznje - fail:",error.toString());
+            }
+        };
+
+        // GET request
+        service.updateVoznje(voznja, callback);
     }
 }
