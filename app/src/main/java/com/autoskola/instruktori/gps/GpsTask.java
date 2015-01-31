@@ -1,17 +1,26 @@
 package com.autoskola.instruktori.gps;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.widget.ListView;
 import android.widget.Toast;
 
+import com.autoskola.instruktori.adapters.CommentAdapter;
 import com.autoskola.instruktori.services.GpsWebService;
 import com.autoskola.instruktori.services.model.GpsInfo;
+import com.autoskola.instruktori.services.model.Komentar;
 import com.autoskola.instruktori.services.model.Prijava;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import io.realm.Realm;
@@ -152,6 +161,70 @@ public class GpsTask {
         realm.commitTransaction();
     }
 
+    public void saveCommentOffline(Context context,Komentar comment){
+
+        // Get realm instance
+        Realm realm = Realm.getInstance(context);
+
+        // Begin db transactions
+        realm.beginTransaction();
+        Komentar realmObject = realm.createObject(Komentar.class);
+        realmObject.setVoznjaId(comment.getVoznjaId());
+        realmObject.setDatum(comment.getDatum());
+        realmObject.setLng(comment.getLng());
+        realmObject.setLtd(comment.getLtd());
+        realmObject.setOpis(comment.getOpis());
+
+        // Save to db
+        realm.commitTransaction();
+
+        // Send notification to map fragment
+        communicatorInterfaceMap.onGpsResponse(GpsResponseTypes.NEW_COMMENT);
+    }
+
+
+    // Get all offline comments
+    public void   getAllOfflineComments(final String voznjaId,final Context context){
+
+        new Thread(new Runnable() {
+            public void run() {
+
+                Realm realm = Realm.getInstance(context);
+                RealmResults<Komentar> gpsList = realm.where(Komentar.class)
+                        .equalTo("voznjaId",voznjaId)
+                        .findAll();
+
+                System.out.println("Broj offline komentara je :"+gpsList.size());
+
+
+            }
+        }).start();
+    }
+
+    public void showAllOfflineComments (final String voznjaId,final Activity context, final ListView listView){
+        new Thread(new Runnable() {
+            public void run() {
+
+                Realm realm = Realm.getInstance(context);
+                RealmResults<Komentar> commentsList = realm.where(Komentar.class)
+                        .equalTo("voznjaId",voznjaId)
+                        .findAll();
+                List <Komentar> list = new ArrayList<Komentar>(commentsList);
+                Collections.reverse(list);
+                final CommentAdapter adapter = new CommentAdapter(context, list);
+
+                context.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        listView.setAdapter(adapter);
+                    }
+                });
+
+            }
+        }).start();
+    }
+
+
     // Get all gps info objects by voznjaId
     public void   getAllOfflineObjects(final String voznjaId,final Context context){
 
@@ -178,6 +251,60 @@ public class GpsTask {
                 postGpsData(gpsList);
             }
         }).start();
+    }
+
+    public void syncComments(final Context context){
+        new Thread(new Runnable() {
+            public void run() {
+                Realm realm = Realm.getInstance(context);
+                RealmResults<Komentar> commentList = realm.where(Komentar.class).findAll();
+                List<Komentar>finalCommentList = new ArrayList<Komentar>();
+                for (int i=0;i<commentList.size();i++){
+                    Komentar komentar  = new Komentar();
+                    komentar.setLng("");
+                    komentar.setLtd("");
+                    komentar.setDatum(commentList.get(i).getDatum());
+                    komentar.setOpis(commentList.get(i).getOpis());
+                    komentar.setVoznjaId(commentList.get(i).getVoznjaId());
+                    finalCommentList.add(komentar);
+                }
+                postCommentData(finalCommentList);
+            }
+        }).start();
+    }
+
+    public void postCommentData(List<Komentar>listKomentara){
+
+        Gson gson = new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .create();
+
+        // Set endpoint
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setEndpoint("http://projekt001.app.fit.ba/autoskola")
+                .build();
+
+        // Generate service
+        GpsWebService service = restAdapter.create(GpsWebService.class);
+
+        // Callback
+        Callback<List<Komentar>> callback = new Callback<List<Komentar>>() {
+            @Override
+            public void success(List<Komentar> aBoolean, Response response) {
+                System.out.println("POST Comments - success");
+                //GpsTask.getInstance().communicatorInterface.onGpsResponse(GpsResponseTypes.GPS_SYNC_SUCCESS);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                System.out.println("POST Comments - fail:"+error);
+                //GpsTask.getInstance().communicatorInterface.onGpsResponse(GpsResponseTypes.GPS_SYNC_FAIL);
+            }
+        };
+
+        // POST request
+        service.postGpsKomentar(listKomentara, callback);
+
     }
 
     public void postGpsData (List<GpsInfo> gpsData){
