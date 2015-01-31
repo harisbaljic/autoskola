@@ -22,5 +22,8 @@ public enum GpsResponseTypes {
 
 
     // GPS LOCATION CHANGE
-    GPS_LOCATION_CHANGED
+    GPS_LOCATION_CHANGED,
+
+    // Offline data changes
+    NEW_COMMENT
 }
