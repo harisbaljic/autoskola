@@ -19,7 +19,7 @@
 
     <!-- ActionBar styles -->
     <style name="AutoskolaThemeActionBar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
-        <item name="android:background">@color/actionbar</item>
+        <item name="android:background">@color/turquoise</item>
     </style>
 
 
@@ -33,5 +33,4 @@
         <item name="android:background">@drawable/custom_btn_rect</item>
         <item name="android:padding">5dip</item>
     </style>
-
 </resources>
