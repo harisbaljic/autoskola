@@ -73,11 +73,6 @@
             android:label="@string/title_activity_main"
             android:screenOrientation="portrait" >
         </activity>
-        <activity
-            android:name=".GlavniMeni"
-            android:label="@string/title_activity_main"
-            android:screenOrientation="portrait" >
-        </activity>
 
         <meta-data
             android:name="com.crashlytics.ApiKey"
