@@ -1,10 +1,6 @@
 package com.autoskola.instruktori.adapters;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +11,8 @@ import android.widget.TextView;
 import com.autoskola.instruktori.R;
 import com.autoskola.instruktori.helpers.Helper;
 import com.autoskola.instruktori.model.Obavijest;
+import com.squareup.picasso.Picasso;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.util.List;
 
 /**
@@ -73,23 +68,8 @@ public class ObavijestiAdapter extends BaseAdapter {
         if(obavijestList.get(position).getSadrzaj() != null)
             viewHolder.tekst.setText(obavijestList.get(position).getSadrzaj());
 
-
-        if (!((Obavijest) getItem(position)).isImageSet()) {
-
-
-            new DownloadImageTask((ImageView)viewHolder.slika).execute(obavijestList.get(position).getSlikaPutanja());
-
-
-
-        }
-
-
-        else {
-            viewHolder.slika.setImageBitmap(((Obavijest) getItem(position))
-                    .getSlikaObavijesti());
-            ((Obavijest) getItem(position)).setImageSet(true);
-        }
-
+        // Download image
+        Picasso.with(activity).load(obavijestList.get(position).getSlikaPutanja()).fit().into(viewHolder.slika);
         return  convertView;
     }
 
@@ -97,29 +77,4 @@ public class ObavijestiAdapter extends BaseAdapter {
         ImageView slika;
         TextView datum,naslov,tekst;
     }
-
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        ImageView bmImage;
-
-        public DownloadImageTask(ImageView bmImage) {
-            this.bmImage = bmImage;
-        }
-
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);}
-    }
-
 }
