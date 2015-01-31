@@ -1,7 +1,6 @@
 package com.autoskola.instruktori.fragments;
 
 import android.app.Dialog;
-import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class FragmentObavijesti extends Fragment {
+public class FragmentObavijesti extends android.support.v4.app.Fragment {
     private String TAG = "MainActivity_LOG";
     private ListView listObavijesti;
     ObavijestiAdapter adapter;
