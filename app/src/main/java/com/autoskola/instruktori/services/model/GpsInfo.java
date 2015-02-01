@@ -11,6 +11,8 @@ public class GpsInfo extends RealmObject{
     private String detaljiVoznjeId;
     private String longitude;
     private String latitude;
+    private int isSynced;
+
 
     public String getVoznjaId() {
         return voznjaId;
@@ -44,4 +46,11 @@ public class GpsInfo extends RealmObject{
         this.latitude = latitude;
     }
 
+    public int getIsSynced() {
+        return isSynced;
+    }
+
+    public void setIsSynced(int isSynced) {
+        this.isSynced = isSynced;
+    }
 }

@@ -9,8 +9,12 @@ public class Komentar extends RealmObject{
     private String ltd;
     private String lng;
     private String voznjaId;
-    private Datum datum;
+    private String datum;
     private String opis;
+    private int isSynced; // 0 - out of sync
+                          // 1 - in progress
+                          // 2 - synced
+
 
     public String getLtd() {
         return ltd;
@@ -44,11 +48,19 @@ public class Komentar extends RealmObject{
         this.opis = opis;
     }
 
-    public Datum getDatum() {
+    public String getDatum() {
         return datum;
     }
 
-    public void setDatum(Datum datum) {
+    public void setDatum(String datum) {
         this.datum = datum;
+    }
+
+    public int getIsSynced() {
+        return isSynced;
+    }
+
+    public void setIsSynced(int isSynced) {
+        this.isSynced = isSynced;
     }
 }
