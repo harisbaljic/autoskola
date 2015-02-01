@@ -38,18 +38,13 @@ public class FragmentPrijave extends android.support.v4.app.Fragment {
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_prijave, container, false);
     }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onActivityCreated(savedInstanceState);
         list = (ListView) getActivity().findViewById(
                 R.id.fragment_prijave_list);
-
-
-       /* final ProgressDialog progressDialog = new ProgressDialog(getActivity());
-        progressDialog.setMessage("Loading...");
-        progressDialog.setCancelable(false);
-        progressDialog.show(); */
 
         final String korisnikId = AppController.getInstance().getKorisnik().getKorisnikId();
         String url = Helper.prijavaSelect;
@@ -68,11 +63,11 @@ public class FragmentPrijave extends android.support.v4.app.Fragment {
                         adapter = new PrijaveAdapter(getActivity(), items);
                         list.setAdapter(adapter);
 
-                        list.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+                        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                             @Override
-                            public void onItemClick(AdapterView<?> adapterView, View view , int position , long id){
+                            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 
-                                Log.d("test","Ušao u on click");
+                                Log.d("test", "Ušao u on click");
 
                                 final Dialog dialog = new Dialog(getActivity());
                                 dialog.setContentView(R.layout.list_item_prijave_inflater);
@@ -80,19 +75,15 @@ public class FragmentPrijave extends android.support.v4.app.Fragment {
                                 dialog.findViewById(R.id.list_item_prijava_inflater_btn_odobri)
                                         .setOnClickListener(new View.OnClickListener() {
 
-                                    @Override
-                                    public void onClick(View v) {
+                                            @Override
+                                            public void onClick(View v) {
 
 
-                                    }
-                                });
-
-
-
-
+                                            }
+                                        });
 
                             }
-                            });
+                        });
 
                     }
                 }, new Response.ErrorListener() {
@@ -116,10 +107,7 @@ public class FragmentPrijave extends android.support.v4.app.Fragment {
         AppController.getInstance().addToRequestQueue(getPrijaveRequest);
 
 
-
-
-            }
-
+    }
 
 
 }
