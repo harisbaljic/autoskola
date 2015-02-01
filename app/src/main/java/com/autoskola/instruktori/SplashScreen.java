@@ -1,8 +1,8 @@
 package com.autoskola.instruktori;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -21,9 +21,10 @@ public class SplashScreen extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_splash_screen);
-		// final ProgressWheel pw = (ProgressWheel)
-		// findViewById(R.id.pw_spinner);
-		// pw.spin();
+
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(false);
+
 		ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar1);
 		final TextView progressText = (TextView) findViewById(R.id.progressText);
 		new CountDownTimer(3000, 1500) {
@@ -46,12 +47,14 @@ public class SplashScreen extends Activity {
 							SplashScreen.this);
 					// pw.stopSpinning();
 					finish();
-					if (memoryManager.isLoggedIn())
-						startActivity(new Intent(SplashScreen.this,
-								NaslovnicaActivity.class));
-					else
-						startActivity(new Intent(SplashScreen.this,
-								MainActivity.class));
+//					if (memoryManager.isLoggedIn())
+//						startActivity(new Intent(SplashScreen.this,
+//								NaslovnicaActivity.class));
+//					else
+//						startActivity(new Intent(SplashScreen.this,
+//								MainActivity.class));
+
+
 				}
 			}
 		}.start();
