@@ -33,6 +33,7 @@ public class FragmentZavrseneVoznje  extends Fragment{
     private List<Prijava> items = new ArrayList<Prijava>();
     private VoznjeAdapter adapter;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -44,6 +45,11 @@ public class FragmentZavrseneVoznje  extends Fragment{
         super.onActivityCreated(savedInstanceState);
         list = (ListView) getActivity().findViewById( R.id.activity_main_list_voznje);
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         // Instruktor id
         String korisnikId = AppController.getInstance().getKorisnik().getKorisnikId();
 
@@ -52,7 +58,6 @@ public class FragmentZavrseneVoznje  extends Fragment{
 
         // Set on click listener
         setListener();
-
     }
 
     private void setListener (){
@@ -94,7 +99,7 @@ public class FragmentZavrseneVoznje  extends Fragment{
             @Override
             public void success(List<com.autoskola.instruktori.services.model.Prijava> prijave, Response response) {
                 Log.d("GET Aktivne prijave - success:", "");
-                items.addAll(prijave);
+                items = new ArrayList<>(prijave);
                 adapter = new VoznjeAdapter(getActivity(), items);
                 list.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
