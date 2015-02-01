@@ -7,19 +7,23 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.autoskola.instruktori.adapters.CommentAdapter;
+import com.autoskola.instruktori.helpers.NetworkConnectivity;
 import com.autoskola.instruktori.services.GpsWebService;
+import com.autoskola.instruktori.services.PrijavaWebService;
+import com.autoskola.instruktori.services.model.CommentSyncState;
 import com.autoskola.instruktori.services.model.GpsInfo;
 import com.autoskola.instruktori.services.model.Komentar;
 import com.autoskola.instruktori.services.model.Prijava;
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.autoskola.instruktori.services.model.Voznja;
+import com.autoskola.instruktori.services.model.VoznjaSimple;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
@@ -100,16 +104,32 @@ public class GpsTask {
             // called when the listener is notified with a location update from the GPS
             showMessage("Lat:"+locFromGps.getLatitude() + "Lng:"+locFromGps.getLongitude());
             if (getAktivnaPrijava(context)!=null){
+
                 GpsInfo info = new GpsInfo();
                 info.setVoznjaId(getAktivnaPrijava(context).VoznjaId);
                 info.setLatitude(String.valueOf(locFromGps.getLatitude()));
                 info.setLongitude(String.valueOf(locFromGps.getLongitude()));
-                GpsTask.getInstance().saveOffline(context,info);
+
+                // Check internet connection
+                if(NetworkConnectivity.isConnected(context)){
+                    // Save online
+                    ArrayList<GpsInfo>list = new ArrayList<>();
+                    info.setIsSynced(CommentSyncState.COMMENT_SYNC_IN_PROGRESS.ordinal());
+                    list.add(info);
+                    postGpsData(list,context);
+
+                }
+                else
+                    info.setIsSynced(CommentSyncState.COMMENT_SYNC_NO.ordinal());
+
+                // Save offline
+                GpsTask.getInstance().saveGpsInfoOffline(context, info);
+
+                // Notify map fragment for change
                 communicatorInterfaceMap.onGpsResponse(GpsResponseTypes.GPS_LOCATION_CHANGED);
             }
             else
                 showMessage("Lokacija je promjenjena, ali nema aktivnih prijava");
-
         }
 
         @Override
@@ -144,59 +164,102 @@ public class GpsTask {
         Toast.makeText((Context)this.communicatorInterface,message,Toast.LENGTH_SHORT).show();
     }
 
-    // Save gps info object  to local db
-    public void saveOffline (Context context,GpsInfo gpsObject){
-        // Get realm instance
-        Realm realm = Realm.getInstance(context);
+    // Save aktivna prijava to preference
+    public void startGPSTask(Prijava prijava,Context context){
+        SharedPreferences.Editor editor = context.getSharedPreferences("AppSharedPereferences",Context.MODE_PRIVATE ).edit();
+        editor.putString("AktivnaPrijava", prijava.convertToJson());
+        editor.commit();
 
-        // Begin db transactions
-        realm.beginTransaction();
-        GpsInfo realmObject = realm.createObject(GpsInfo.class);
-        realmObject.setDetaljiVoznjeId("");
-        realmObject.setVoznjaId(gpsObject.getVoznjaId());
-        realmObject.setLatitude(gpsObject.getLatitude());
-        realmObject.setLongitude(gpsObject.getLongitude());
-
-        // Save to db
-        realm.commitTransaction();
+        // Save voznja offline
+        saveVoznjaOffline(prijava,context);
     }
 
-    public void saveCommentOffline(Context context,Komentar comment){
+    // Remove aktivna prijava from preference
+    public void stopGpsTask(Context context){
+        // Update status
+        updateVoznjaOfflineStatus(getAktivnaPrijava(context),context);
 
-        // Get realm instance
-        Realm realm = Realm.getInstance(context);
-
-        // Begin db transactions
-        realm.beginTransaction();
-        Komentar realmObject = realm.createObject(Komentar.class);
-        realmObject.setVoznjaId(comment.getVoznjaId());
-        realmObject.setDatum(comment.getDatum());
-        realmObject.setLng(comment.getLng());
-        realmObject.setLtd(comment.getLtd());
-        realmObject.setOpis(comment.getOpis());
-
-        // Save to db
-        realm.commitTransaction();
-
-        // Send notification to map fragment
-        communicatorInterfaceMap.onGpsResponse(GpsResponseTypes.NEW_COMMENT);
+        // Remove from preference
+        SharedPreferences.Editor editor = context.getSharedPreferences("AppSharedPereferences",Context.MODE_PRIVATE ).edit();
+        editor.putString("AktivnaPrijava",null);
+        editor.commit();
     }
 
 
-    // Get all offline comments
-    public void   getAllOfflineComments(final String voznjaId,final Context context){
+    // Get aktivna prijava from preferene
+    public Prijava getAktivnaPrijava (Context context){
+        SharedPreferences prefs = context.getSharedPreferences("AppSharedPereferences",Context.MODE_PRIVATE);
+        String prijava_json = prefs.getString("AktivnaPrijava", null);
+        return new Prijava().convertFromJson(prijava_json);
+    }
 
+    //////////////////////////////////////////////////////////////
+    // FUNCTIONS FOR SAVE COMMENTS
+    //////////////////////////////////////////////////////////////
+
+    public void postCommentData(List<Komentar>listKomentara, final Context context){
+
+        // Set endpoint
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setEndpoint("http://projekt001.app.fit.ba/autoskola")
+                .build();
+
+        // Generate service
+        GpsWebService service = restAdapter.create(GpsWebService.class);
+
+        // Callback
+        Callback<List<Komentar>> callback = new Callback<List<Komentar>>() {
+            @Override
+            public void success(List<Komentar> aBoolean, Response response) {
+                System.out.println("POST Comments - success");
+                // Remove comments locally
+                Realm realm = Realm.getInstance(context);
+                RealmResults<Komentar> commentList = realm.where(Komentar.class)
+                       .equalTo("isSynced",CommentSyncState.COMMENT_SYNC_IN_PROGRESS.ordinal()).findAll();
+
+                realm.beginTransaction();
+                for (Komentar komentar : commentList){
+                    komentar.setIsSynced(CommentSyncState.COMMENT_SYNC_YES.ordinal());
+                }
+                realm.commitTransaction();
+                GpsTask.getInstance().showMessage("Comment synced successfuly");
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                System.out.println("POST Comments - fail:"+error);
+                //GpsTask.getInstance().communicatorInterface.onGpsResponse(GpsResponseTypes.GPS_SYNC_FAIL);
+            }
+        };
+
+        // POST request
+        service.postGpsKomentar(listKomentara, callback);
+    }
+
+    public void syncComments(final Context context){
         new Thread(new Runnable() {
             public void run() {
-
                 Realm realm = Realm.getInstance(context);
-                RealmResults<Komentar> gpsList = realm.where(Komentar.class)
-                        .equalTo("voznjaId",voznjaId)
+                RealmResults<Komentar> commentList = realm.where(Komentar.class)
+                        .equalTo("isSynced",CommentSyncState.COMMENT_SYNC_NO.ordinal())
                         .findAll();
 
-                System.out.println("Broj offline komentara je :"+gpsList.size());
+                realm.beginTransaction();
+                List<Komentar>finalCommentList = new ArrayList<Komentar>();
+                for (int i=0;i<commentList.size();i++){
+                    Komentar komentar  = new Komentar();
+                    komentar.setLng("");
+                    komentar.setLtd("");
+                    komentar.setDatum(commentList.get(i).getDatum());
+                    komentar.setOpis(commentList.get(i).getOpis());
+                    komentar.setVoznjaId(commentList.get(i).getVoznjaId());
+                    finalCommentList.add(komentar);
 
-
+                    // Update local comment object
+                    commentList.get(i).setIsSynced(CommentSyncState.COMMENT_SYNC_IN_PROGRESS.ordinal());
+                }
+                realm.commitTransaction();
+                postCommentData(finalCommentList, context);
             }
         }).start();
     }
@@ -225,89 +288,33 @@ public class GpsTask {
     }
 
 
-    // Get all gps info objects by voznjaId
-    public void   getAllOfflineObjects(final String voznjaId,final Context context){
+    public void saveCommentOffline(Context context,Komentar comment){
 
-        new Thread(new Runnable() {
-            public void run() {
+        // Get realm instance
+        Realm realm = Realm.getInstance(context);
 
-                Realm realm = Realm.getInstance(context);
-                RealmResults<GpsInfo> gpsList = realm.where(GpsInfo.class)
-                        .equalTo("voznjaId",voznjaId)
-                        .findAll();
+        // Begin db transactions
+        realm.beginTransaction();
+        Komentar realmObject = realm.createObject(Komentar.class);
+        realmObject.setVoznjaId(comment.getVoznjaId());
+        realmObject.setDatum(comment.getDatum());
+        realmObject.setLng(comment.getLng());
+        realmObject.setLtd(comment.getLtd());
+        realmObject.setOpis(comment.getOpis());
+        realmObject.setIsSynced(comment.getIsSynced());
 
+        // Save to db
+        realm.commitTransaction();
 
-            }
-        }).start();
+        // Send notification to map fragment
+        communicatorInterfaceMap.onGpsResponse(GpsResponseTypes.NEW_COMMENT);
     }
 
-    // Sync local db to server
-    public void syncGpsData (final Context context){
+    //////////////////////////////////////////////////////////////
+    // FUNCTIONS FOR SAVE GPS DATA
+    //////////////////////////////////////////////////////////////
 
-        new Thread(new Runnable() {
-            public void run() {
-                Realm realm = Realm.getInstance(context);
-                RealmResults<GpsInfo> gpsList = realm.where(GpsInfo.class).findAll();
-                postGpsData(gpsList);
-            }
-        }).start();
-    }
-
-    public void syncComments(final Context context){
-        new Thread(new Runnable() {
-            public void run() {
-                Realm realm = Realm.getInstance(context);
-                RealmResults<Komentar> commentList = realm.where(Komentar.class).findAll();
-                List<Komentar>finalCommentList = new ArrayList<Komentar>();
-                for (int i=0;i<commentList.size();i++){
-                    Komentar komentar  = new Komentar();
-                    komentar.setLng("");
-                    komentar.setLtd("");
-                    komentar.setDatum(commentList.get(i).getDatum());
-                    komentar.setOpis(commentList.get(i).getOpis());
-                    komentar.setVoznjaId(commentList.get(i).getVoznjaId());
-                    finalCommentList.add(komentar);
-                }
-                postCommentData(finalCommentList);
-            }
-        }).start();
-    }
-
-    public void postCommentData(List<Komentar>listKomentara){
-
-        Gson gson = new GsonBuilder()
-                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-                .create();
-
-        // Set endpoint
-        RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint("http://projekt001.app.fit.ba/autoskola")
-                .build();
-
-        // Generate service
-        GpsWebService service = restAdapter.create(GpsWebService.class);
-
-        // Callback
-        Callback<List<Komentar>> callback = new Callback<List<Komentar>>() {
-            @Override
-            public void success(List<Komentar> aBoolean, Response response) {
-                System.out.println("POST Comments - success");
-                //GpsTask.getInstance().communicatorInterface.onGpsResponse(GpsResponseTypes.GPS_SYNC_SUCCESS);
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                System.out.println("POST Comments - fail:"+error);
-                //GpsTask.getInstance().communicatorInterface.onGpsResponse(GpsResponseTypes.GPS_SYNC_FAIL);
-            }
-        };
-
-        // POST request
-        service.postGpsKomentar(listKomentara, callback);
-
-    }
-
-    public void postGpsData (List<GpsInfo> gpsData){
+    public void postGpsData (List<GpsInfo> gpsData, final Context context){
 
         // Set endpoint
         RestAdapter restAdapter = new RestAdapter.Builder()
@@ -322,6 +329,17 @@ public class GpsTask {
             @Override
             public void success(List<GpsInfo> aBoolean, Response response) {
                 System.out.println("POST GpsInfo - success");
+                // Remove comments locally
+                Realm realm = Realm.getInstance(context);
+                RealmResults<GpsInfo> commentList = realm.where(GpsInfo.class)
+                        .equalTo("isSynced",CommentSyncState.COMMENT_SYNC_IN_PROGRESS.ordinal()).findAll();
+
+                realm.beginTransaction();
+                for (GpsInfo komentar : commentList)
+                    komentar.setIsSynced(CommentSyncState.COMMENT_SYNC_YES.ordinal());
+
+                realm.commitTransaction();
+
                 GpsTask.getInstance().communicatorInterface.onGpsResponse(GpsResponseTypes.GPS_SYNC_SUCCESS);
             }
 
@@ -336,25 +354,167 @@ public class GpsTask {
         service.postGpsInfo(gpsData, callback);
     }
 
-    // Save aktivna prijava to preference
-    public void startGPSTask(Prijava prijava,Context context){
-        SharedPreferences.Editor editor = context.getSharedPreferences("AppSharedPereferences",Context.MODE_PRIVATE ).edit();
-        editor.putString("AktivnaPrijava", prijava.convertToJson());
-        editor.commit();
+    // Sync local db to server
+    public void syncGpsInfo (final Context context){
+
+        new Thread(new Runnable() {
+            public void run() {
+                Realm realm = Realm.getInstance(context);
+                RealmResults<GpsInfo> gpsList = realm.where(GpsInfo.class).
+                        equalTo("isSynced", CommentSyncState.COMMENT_SYNC_NO.ordinal()).
+                        findAll();
+                realm.beginTransaction();
+
+                // Set progress
+                ArrayList<GpsInfo> list  = new ArrayList<>();
+                for (GpsInfo info : gpsList) {
+                    GpsInfo obj = new GpsInfo();
+                    obj.setLatitude(info.getLatitude());
+                    obj.setLongitude(info.getLongitude());
+                    obj.setVoznjaId(info.getVoznjaId());
+                    list.add(obj);
+                    System.out.println("Lat: "+info.getLatitude() + "Lng:"+info.getLongitude() + "Status:"+info.getIsSynced());
+                    info.setIsSynced(CommentSyncState.COMMENT_SYNC_IN_PROGRESS.ordinal());
+                }
+
+                // Commit update
+                realm.commitTransaction();
+
+                // Post
+                postGpsData(list, context);
+            }
+        }).start();
     }
 
-    // Remove aktivna prijava from preference
-    public void stopGpsTask(Context context){
-        SharedPreferences.Editor editor = context.getSharedPreferences("AppSharedPereferences",Context.MODE_PRIVATE ).edit();
-        editor.putString("AktivnaPrijava",null);
-        editor.commit();
+    // Save gps info object  to local db
+    public void saveGpsInfoOffline (Context context,GpsInfo gpsObject){
+        // Get realm instance
+        Realm realm = Realm.getInstance(context);
+
+        // Begin db transactions
+        realm.beginTransaction();
+        GpsInfo realmObject = realm.createObject(GpsInfo.class);
+        realmObject.setDetaljiVoznjeId("");
+        realmObject.setVoznjaId(gpsObject.getVoznjaId());
+        realmObject.setLatitude(gpsObject.getLatitude());
+        realmObject.setLongitude(gpsObject.getLongitude());
+        realmObject.setIsSynced(gpsObject.getIsSynced());
+
+        // Save to db
+        realm.commitTransaction();
     }
 
+    //////////////////////////////////////////////////////////////
+    // FUNCTIONS FOR SAVE VOZNJA
+    //////////////////////////////////////////////////////////////
 
-    // Get aktivna prijava from preferene
-    public Prijava getAktivnaPrijava (Context context){
-        SharedPreferences prefs = context.getSharedPreferences("AppSharedPereferences",Context.MODE_PRIVATE);
-        String prijava_json = prefs.getString("AktivnaPrijava", null);
-        return new Prijava().convertFromJson(prijava_json);
+    private  void updateVoznjaOfflineStatus (final Prijava prijava,final  Context context){
+
+        new Thread(new Runnable() {
+            public void run() {
+                Realm realm = Realm.getInstance(context);
+                realm.beginTransaction();
+                Voznja voznja = realm.where(Voznja.class)
+                        .equalTo("voznjaId",prijava.VoznjaId)
+                        .findFirst();
+
+                if (voznja !=null){
+                    voznja.setStatus(1);
+                    realm.commitTransaction();
+                }
+            }
+        }).start();
+
     }
+
+    public void saveVoznjaOffline (Prijava prijava, Context context){
+
+        // Get realm instance
+        Realm realm = Realm.getInstance(context);
+        Voznja voznja = realm.where(Voznja.class)
+                .equalTo("voznjaId",prijava.VoznjaId)
+                .findFirst();
+
+        // Prevent duplication
+        if (voznja == null){
+            // Begin db transactions
+            realm.beginTransaction();
+
+            // Create new object
+            Voznja realmObject = realm.createObject(Voznja.class);
+            realmObject.setVoznjaId(prijava.VoznjaId);
+            realmObject.setStatus(0);
+            realmObject.setDate(Calendar.getInstance().getTime().toString());
+            realmObject.setIme(prijava.Ime);
+            realmObject.setPrezime(prijava.Prezime);
+
+            // Save to db
+            realm.commitTransaction();
+        }
+
+    }
+
+    private void postVoznja ( final VoznjaSimple voznja,final Context context){
+
+        // Set endpoint
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setEndpoint("http://projekt001.app.fit.ba/autoskola")
+                .build();
+
+        // Generate service
+        PrijavaWebService service = restAdapter.create(PrijavaWebService.class);
+
+        // Callback
+        Callback<VoznjaSimple> callback = new Callback<VoznjaSimple>() {
+            @Override
+            public void success(VoznjaSimple prijave, Response response) {
+                Log.d("Update voznje - success:", "");
+
+                // Update sync state
+                Realm realm = Realm.getInstance(context);
+                realm.beginTransaction();
+                Voznja object = realm.where(Voznja.class)
+                        .equalTo("voznjaId",voznja.getVoznjaId())
+                        .findFirst();
+
+               object.setIsSynced(CommentSyncState.COMMENT_SYNC_YES.ordinal());
+               realm.commitTransaction();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.d("Update voznje - fail:",error.toString() + error.getResponse());
+            }
+        };
+
+        // GET request
+        service.updateVoznje(voznja, callback);
+    }
+
+    public void syncVoznjeStatus (final Context context){
+
+        new Thread(new Runnable() {
+            public void run() {
+                Realm realm = Realm.getInstance(context);
+                RealmResults<Voznja> voznjeList = realm.where(Voznja.class)
+                        .equalTo("status", 1)
+                        .notEqualTo("isSynced", CommentSyncState.COMMENT_SYNC_NO.ordinal())
+                        .findAll();
+
+                realm.beginTransaction();
+                for (Voznja object : voznjeList) {
+                    VoznjaSimple simple = new VoznjaSimple();
+                    simple.setVoznjaId(object.getVoznjaId());
+                    simple.setStatus(object.getStatus());
+                    object.setIsSynced(CommentSyncState.COMMENT_SYNC_IN_PROGRESS.ordinal());
+                    postVoznja(simple, context);
+                }
+                realm.commitTransaction();
+
+
+            }
+        }).start();
+
+    }
+
 }
