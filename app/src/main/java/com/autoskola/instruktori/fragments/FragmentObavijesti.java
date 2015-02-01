@@ -20,7 +20,7 @@ import com.autoskola.instruktori.adapters.ObavijestiAdapter;
 import com.autoskola.instruktori.helpers.AppController;
 import com.autoskola.instruktori.helpers.Helper;
 import com.autoskola.instruktori.model.Datum;
-import com.autoskola.instruktori.model.Obavijest;
+import com.autoskola.instruktori.services.model.Obavijest;
 
 import org.json.JSONArray;
 import org.json.JSONException;

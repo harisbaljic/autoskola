@@ -1,4 +1,4 @@
-package com.autoskola.instruktori.model;
+package com.autoskola.instruktori.services.model;
 
 /**
  * Created by The Boss on 4.1.2015.

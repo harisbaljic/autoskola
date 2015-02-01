@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.autoskola.instruktori.R;
 import com.autoskola.instruktori.helpers.Helper;
-import com.autoskola.instruktori.model.Obavijest;
+import com.autoskola.instruktori.services.model.Obavijest;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;

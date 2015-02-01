@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
-import com.autoskola.instruktori.model.Korisnik;
+import com.autoskola.instruktori.services.model.Korisnik;
 import com.google.gson.Gson;
 
 public class MemoryManager {

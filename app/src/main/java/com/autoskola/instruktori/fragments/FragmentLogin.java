@@ -14,7 +14,7 @@ import com.autoskola.instruktori.R;
 import com.autoskola.instruktori.helpers.AppController;
 import com.autoskola.instruktori.helpers.Helper;
 import com.autoskola.instruktori.helpers.MemoryManager;
-import com.autoskola.instruktori.model.Korisnik;
+import com.autoskola.instruktori.services.model.Korisnik;
 import com.autoskola.instruktori.ui.MainActivity2;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
