@@ -22,7 +22,6 @@ public class VoznjeAdapter extends BaseAdapter {
     private List<Prijava> prijaveList;
 
 
-
     public VoznjeAdapter(Activity activity, List<Prijava> prijaveList) {
         super();
         this.activity = activity;
@@ -69,6 +68,7 @@ public class VoznjeAdapter extends BaseAdapter {
         /*if(uplateList.get(position).getDatum() != null)
             viewHolder.datum.setText(uplateList.get(position).getDatum());*/
 
+        GpsTask.getInstance().saveVoznjaOffline(prijaveList.get(position),activity);
         return convertView;
     }
 
