@@ -1,25 +1,21 @@
 package com.autoskola.instruktori.fragments;
 
-import android.app.Fragment;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.autoskola.instruktori.GlavniMeni;
-import com.autoskola.instruktori.NaslovnicaActivity;
 import com.autoskola.instruktori.R;
 import com.autoskola.instruktori.helpers.AppController;
 import com.autoskola.instruktori.helpers.Helper;
 import com.autoskola.instruktori.helpers.MemoryManager;
 import com.autoskola.instruktori.model.Korisnik;
+import com.autoskola.instruktori.ui.MainActivity2;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -32,27 +28,26 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 
-public class FragmentLogin extends Fragment {
+public class FragmentLogin extends Activity {
 
     private EditText mFragment_login_username;
     private EditText mFragment_login_password;
     private Button mFragment_login_button;
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_login,container,false);
 
-        mFragment_login_username = (EditText) view.findViewById(R.id.fragment_login_username);
-        mFragment_login_password = (EditText) view.findViewById(R.id.fragment_login_password);
-        mFragment_login_button = (Button) view.findViewById(R.id.fragment_login_button);
-        return  view;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_login);
+        mFragment_login_username = (EditText) findViewById(R.id.fragment_login_username);
+        mFragment_login_password = (EditText) findViewById(R.id.fragment_login_password);
+        mFragment_login_button = (Button) findViewById(R.id.fragment_login_button);
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+    protected void onResume() {
+        super.onResume();
+        final ProgressDialog progressDialog = new ProgressDialog(FragmentLogin.this);
         progressDialog.setMessage("Loading...");
 
         mFragment_login_button.setOnClickListener(new View.OnClickListener() {
@@ -107,12 +102,12 @@ public class FragmentLogin extends Fragment {
                                                 .setKorisnik(k);
 
                                         MemoryManager memoryManager = new MemoryManager(
-                                                getActivity());
+                                               FragmentLogin.this);
                                         memoryManager.logInUser(new Gson()
                                                 .toJson(k));
-                                       getActivity().finish();
-                                        startActivity(new Intent(getActivity(),
-                                               GlavniMeni.class));
+                                        FragmentLogin.this.finish();
+                                        startActivity(new Intent(FragmentLogin.this,
+                                                MainActivity2.class));
                                     } catch (Exception e) {
                                         // TODO: handle exception
                                     }
@@ -131,7 +126,7 @@ public class FragmentLogin extends Fragment {
                                     Log.d("fail", responseString + " "
                                             + throwable.getMessage());
                                     Toast.makeText(
-                                            getActivity(),
+                                            FragmentLogin.this,
                                             "Pogrešno korisničko ime i/ili lozinka.",
                                             Toast.LENGTH_LONG).show();
                                     mFragment_login_password.setText("");
@@ -145,7 +140,9 @@ public class FragmentLogin extends Fragment {
             }
 
 
-        });}
+        });
+    }
+
 
     static String sha1(String input) throws NoSuchAlgorithmException {
         MessageDigest mDigest = MessageDigest.getInstance("SHA1");
