@@ -40,7 +40,10 @@
             android:layout_height="wrap_content"
             android:hint="Korisničko ime"
             android:singleLine="true"
-            android:textColor="#696969" />
+            android:textColor="#696969"
+            android:text="b"
+
+            />
 
         <EditText
             android:id="@+id/fragment_login_password"
@@ -51,7 +54,10 @@
             android:hint="Lozinka"
             android:password="true"
             android:singleLine="true"
-            android:textColor="#696969" />
+            android:textColor="#696969"
+            android:text="b"
+
+            />
     </RelativeLayout>
 
     <RelativeLayout

@@ -2,11 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="390dp">
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    >
 
     <ImageView
         android:id="@+id/list_item_obavijesti_inflater_slika"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="260dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
@@ -21,14 +23,7 @@
         android:layout_below="@+id/list_item_obavijesti_inflater_slika"
         android:layout_marginRight="10dp"
         android:gravity="center_vertical|end"
-        android:text="28.12.2014. 1:59:08"
         android:textSize="12sp" />
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="160dp"
-        android:layout_below="@id/list_item_obavijesti_inflater_datum"
-        android:layout_margin="10dp"
-        android:padding="5dp">
 
     <TextView
         android:id="@+id/list_item_obavijesti_inflater_naslov"
@@ -37,21 +32,23 @@
         android:minHeight="30dp"
         android:fontFamily="sans-serif-condensed"
         android:gravity="center_vertical"
-        android:text="Sarajevo, 06. januar 2015."
+
         android:textSize="20sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        android:layout_below="@+id/list_item_obavijesti_inflater_datum"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        />
 
-        <TextView
-            android:id="@+id/list_item_obavijesti_inflater_tekst"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/list_item_obavijesti_inflater_naslov"
-            android:maxLines="5"
-            android:text="Sarajevo, 06. januar 2015. - Muhammed a.s. jeste bio čovjek kao i mi, ali on nije bio tek obični čovjek, bio je Allahov rob, poslanik i miljenik, bio je čovjek savršene ćudi - rekao je akademik Mefail Hizli, muftija Ankare, koji je sinoć u Domu oružanih snaga održao predavanje o temi Muhammed a.s. uzor prekrasni"/>
-
-
-      </RelativeLayout>
-
-
+    <TextView
+        android:id="@+id/list_item_obavijesti_inflater_tekst"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:paddingBottom="10dp"
+        android:layout_below="@id/list_item_obavijesti_inflater_naslov"/>
 
 </RelativeLayout>
