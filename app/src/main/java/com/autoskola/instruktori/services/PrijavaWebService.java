@@ -1,7 +1,7 @@
 package com.autoskola.instruktori.services;
 
-import com.autoskola.instruktori.model.Voznja;
 import com.autoskola.instruktori.services.model.Prijava;
+import com.autoskola.instruktori.services.model.VoznjaSimple;
 
 import java.util.List;
 
@@ -25,5 +25,5 @@ public interface PrijavaWebService {
     void getZavrseneVoznje(@Query("instruktorId") String instruktorId, Callback<List<Prijava>> cb);
 
     @POST("/servis_VoznjeUpdate.php")
-    void updateVoznje (@Body Voznja info,Callback<Voznja> cb);
+    void updateVoznje (@Body VoznjaSimple info,Callback<VoznjaSimple> cb);
 }
