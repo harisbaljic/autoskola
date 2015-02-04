@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="actionbar">#e03500</color>
+    <color name="actionbar">#ff8cbae0</color>
     <color name="transparent">#0025C9DA</color>
-    <color name="actionbar_10">#fff53600</color>
-    <color name="actionbar_30">#ffe03500</color>
-    <color name="actionbar_50">#ffcd3500</color>
+    <color name="actionbar_10">#ff5be0f5</color>
+    <color name="actionbar_30">#ff90cbe0</color>
+    <color name="actionbar_50">#ff6bcdca</color>
     <color name="list_background">#303030</color>
     <color name="list_background_pressed">#25C9DA</color>
 

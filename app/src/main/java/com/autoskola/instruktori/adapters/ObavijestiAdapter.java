@@ -1,6 +1,10 @@
 package com.autoskola.instruktori.adapters;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +17,7 @@ import com.autoskola.instruktori.helpers.Helper;
 import com.autoskola.instruktori.services.model.Obavijest;
 import com.squareup.picasso.Picasso;
 
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -68,13 +73,52 @@ public class ObavijestiAdapter extends BaseAdapter {
         if(obavijestList.get(position).getSadrzaj() != null)
             viewHolder.tekst.setText(obavijestList.get(position).getSadrzaj());
 
-        // Download image
-        Picasso.with(activity).load(obavijestList.get(position).getSlikaPutanja()).fit().into(viewHolder.slika);
+
+        if (!((Obavijest) getItem(position)).isImageSet()) {
+
+            Obavijest O = obavijestList.get((position));
+            String sp = obavijestList.get(position).getPutanjaSlika();
+            if(sp != null)
+                new DownloadImageTask((ImageView)viewHolder.slika).execute("http://projekt001.app.fit.ba"+sp);
+
+
+
+        }
+
+
+        else {
+
+        }
+
         return  convertView;
     }
 
     static class ViewHolder {
         ImageView slika;
         TextView datum,naslov,tekst;
+    }
+
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        public DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);}
     }
 }

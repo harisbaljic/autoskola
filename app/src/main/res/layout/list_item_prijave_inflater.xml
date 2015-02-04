@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="70dp"
+    android:layout_height="120dp"
     android:layout_margin="5dp"
     android:background="@color/actionbar_10"
     android:orientation="horizontal"
@@ -15,25 +15,28 @@
 
         <TextView
             android:id="@+id/list_item_prijava_inflater_kandidat"
-            android:layout_width="fill_parent"
-            android:layout_height="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
             android:fontFamily="sans-serif-condensed"
             android:gravity="center_vertical"
             android:singleLine="true"
             android:text="Lorem ipsum"
             android:textSize="18sp"
             android:textStyle="bold" />
-
         <TextView
-            android:id="@+id/list_item_prijava_inflater_status"
+            android:id="@+id/list_item_prijava_inflater_napomena"
             android:layout_width="wrap_content"
-            android:layout_height="20dp"
-            android:text="13h"
+            android:layout_height="50dp"
+            android:fontFamily="sans-serif-condensed"
             android:gravity="center_vertical"
-            android:textStyle="italic"
-            android:layout_alignBottom="@+id/list_item_prijava_inflater_datum"
-            android:layout_toRightOf="@+id/list_item_prijava_inflater_datum"
-            android:layout_toEndOf="@+id/list_item_prijava_inflater_datum" />
+            android:layout_marginLeft="5dp"
+            android:layout_alignBottom="@+id/list_item_prijava_inflater_kandidat"
+            android:layout_toRightOf="@+id/list_item_prijava_inflater_kandidat"
+            android:layout_toEndOf="@+id/list_item_prijava_inflater_kandidat"
+            android:text="Napomena"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
 
 
         <TextView
@@ -46,13 +49,23 @@
 
         <TextView
             android:id="@+id/list_item_prijava_inflater_datum"
-            android:layout_width="wrap_content"
+            android:layout_width="68dp"
             android:layout_height="20dp"
             android:text="11.01.2015."
             android:textStyle="italic"
             android:layout_alignBottom="@+id/list_item_prijava_datum_lbl"
             android:layout_toRightOf="@+id/list_item_prijava_datum_lbl"
             android:layout_toEndOf="@+id/list_item_prijava_datum_lbl" />
+
+        <TextView
+            android:id="@+id/list_item_prijava_inflater_status"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:text="13h"
+            android:gravity="center_vertical"
+            android:textStyle="italic"
+            android:layout_below="@+id/list_item_prijava_inflater_datum" />
+
     </RelativeLayout>
 
     <RelativeLayout
@@ -65,20 +78,30 @@
 
         <Button
             android:id="@+id/list_item_prijava_inflater_btn_odobri"
-            android:layout_width="wrap_content"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
             android:fontFamily="sans-serif-condensed"
             android:gravity="center"
             android:text="Odobri"
             android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
             android:textStyle="bold"
             android:textSize="18sp"
-
-
-
+            android:layout_centerInParent="true"
             />
 
+        <Button
+            android:id="@+id/list_item_prijava_inflater_btn_ponisti"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:fontFamily="sans-serif-condensed"
+            android:gravity="center"
+            android:text="Poništi"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:textStyle="bold"
+            android:textSize="18sp"/>
 
     </RelativeLayout>
 

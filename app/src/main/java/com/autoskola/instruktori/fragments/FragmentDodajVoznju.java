@@ -67,7 +67,7 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
             // Instruktor id
             String korisnikId = AppController.getInstance().getKorisnik().getKorisnikId();
 
-            GpsTask.getInstance().showMessage("Imas internet, pokusavam getati voznje");
+            GpsTask.getInstance().showMessage("Ima interneta, pokusavam getati voznje");
             // Get all aktivne prijave
             getAktivnePrijave(korisnikId);
 

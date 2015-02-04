@@ -49,17 +49,24 @@ public class PrijaveAdapter extends BaseAdapter {
             viewHolder.datum = (TextView) convertView.findViewById(R.id.list_item_prijava_inflater_datum);
             viewHolder.kandidat = (TextView) convertView.findViewById(R.id.list_item_prijava_inflater_kandidat);
             viewHolder.vrijeme =  (TextView) convertView.findViewById(R.id.list_item_prijava_inflater_status);
+            viewHolder.napomena =  (TextView) convertView.findViewById(R.id.list_item_prijava_inflater_napomena);
             convertView.setTag(viewHolder);
-        } else {
+        } else
+        {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-       if (prijaveList.get(position).getDatumVoznje() != null) {
-           viewHolder.datum.setText(Helper.parseToFullDate(prijaveList.get(position).getDatumPrijave().toString() + " "));
-       }
+            String dt = prijaveList.get(position).getDatumVoznje();
+           viewHolder.datum.setText(dt);
+            String tekst = " u " + prijaveList.get(position).getVrijemeVoznje().toString() +
+                    " do " + prijaveList.get(position).getVrijemeVoznjeDo().toString();
 
         if (prijaveList.get(position).getVrijemeVoznje() != null) {
-            viewHolder.vrijeme.setText("u" + prijaveList.get(position).getVrijemeVoznje().toString());
+            viewHolder.vrijeme.setText(tekst);
+        }
+
+        if (prijaveList.get(position).getNapomena() != null) {
+            viewHolder.napomena.setText(prijaveList.get(position).getNapomena().toString());
         }
 
         if (prijaveList.get(position).getIme() != null || prijaveList.get(position).getPrezime() != null)
@@ -68,7 +75,7 @@ public class PrijaveAdapter extends BaseAdapter {
         }
 
 
-        Button btnOdobri= (Button)  convertView.findViewById(R.id.list_item_prijava_inflater_btn_odobri);
+        final Button btnOdobri= (Button)  convertView.findViewById(R.id.list_item_prijava_inflater_btn_odobri);
 
         btnOdobri.setOnClickListener(new View.OnClickListener()
         {
@@ -98,7 +105,7 @@ public class PrijaveAdapter extends BaseAdapter {
                     protected Map<String, String> getParams() {
                         Map<String, String> params = new HashMap<String, String>();
 
-                        params.put("status", 1 + "");
+                        params.put("voznjaId", 1 + "");
 
                         return params;
                     }
@@ -134,7 +141,7 @@ public class PrijaveAdapter extends BaseAdapter {
 
 
     private class ViewHolder {
-        TextView datum, kandidat,vrijeme;
+        TextView datum, kandidat,vrijeme,napomena;
         Button odobri;
     }
 
