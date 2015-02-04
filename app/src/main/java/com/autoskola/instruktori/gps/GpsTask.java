@@ -117,7 +117,6 @@ public class GpsTask {
                     info.setIsSynced(CommentSyncState.COMMENT_SYNC_IN_PROGRESS.ordinal());
                     list.add(info);
                     postGpsData(list,context);
-
                 }
                 else
                     info.setIsSynced(CommentSyncState.COMMENT_SYNC_NO.ordinal());
@@ -126,7 +125,9 @@ public class GpsTask {
                 GpsTask.getInstance().saveGpsInfoOffline(context, info);
 
                 // Notify map fragment for change
-                communicatorInterfaceMap.onGpsResponse(GpsResponseTypes.GPS_LOCATION_CHANGED);
+                if (communicatorInterfaceMap!=null) {
+                    communicatorInterfaceMap.onGpsResponse(GpsResponseTypes.GPS_LOCATION_CHANGED);
+                }
             }
             else
                 showMessage("Lokacija je promjenjena, ali nema aktivnih prijava");

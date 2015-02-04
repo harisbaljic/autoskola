@@ -91,7 +91,7 @@ public class FragmentPrijave extends android.support.v4.app.Fragment {
             @Override
             public void onErrorResponse(VolleyError arg0) {
 
-                Log.e("onErrorResponse", arg0.getMessage());
+
             }
         }) {
             @Override

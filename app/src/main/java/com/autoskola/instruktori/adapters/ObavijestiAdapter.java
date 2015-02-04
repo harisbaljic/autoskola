@@ -67,7 +67,11 @@ public class ObavijestiAdapter extends BaseAdapter {
         {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        viewHolder.datum.setText(Helper.parseDateForObavijesti(obavijestList.get(position).getDatumObjave().getDate()));
+
+        if (obavijestList.get(position).getDatumObjave()!=null && obavijestList.get(position).getDatumObjave().getDate()!=null){
+            viewHolder.datum.setText(Helper.parseDateForObavijesti(obavijestList.get(position).getDatumObjave().getDate()));
+        }
+
         if(obavijestList.get(position).getNaslov() != null)
             viewHolder.naslov.setText(obavijestList.get(position).getNaslov());
         if(obavijestList.get(position).getSadrzaj() != null)
