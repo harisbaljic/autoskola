@@ -196,7 +196,7 @@ public class MapaLive extends Fragment implements GpsResponseHandler,View.OnClic
         GpsTask.getInstance().saveCommentOffline(getActivity(), comment);
 
         // Draw comment on map
-        MapHelper.getInstance().drawCommentsOnMap(comment,googleMap,this.getActivity());
+        MapHelper.getInstance().drawCommentOnMap(comment,googleMap,this.getActivity());
     }
 
     @Override
