@@ -47,40 +47,43 @@ public class PrijaveAdapter extends BaseAdapter {
             viewHolder = new ViewHolder();
             viewHolder.datum = (TextView) convertView.findViewById(R.id.list_item_prijava_inflater_datum);
             viewHolder.kandidat = (TextView) convertView.findViewById(R.id.list_item_prijava_inflater_kandidat);
-            viewHolder.vrijeme =  (TextView) convertView.findViewById(R.id.list_item_prijava_inflater_status);
-            viewHolder.napomena =  (TextView) convertView.findViewById(R.id.list_item_prijava_inflater_napomena);
+            viewHolder.vrijeme = (TextView) convertView.findViewById(R.id.list_item_prijava_inflater_status);
+            viewHolder.napomena = (TextView) convertView.findViewById(R.id.list_item_prijava_inflater_napomena);
             convertView.setTag(viewHolder);
-        } else
-        {
+        } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-            String dt = prijaveList.get(position).getDatumVoznje();
-           viewHolder.datum.setText(dt);
-            String tekst = " u " + prijaveList.get(position).getVrijemeVoznje().toString() +
-                    " do " + prijaveList.get(position).getVrijemeVoznjeDo().toString();
+        String dt = prijaveList.get(position).getDatumVoznje();
+        viewHolder.datum.setText(dt);
 
+
+        String vrijemeOdDo = "";
         if (prijaveList.get(position).getVrijemeVoznje() != null) {
-            viewHolder.vrijeme.setText(tekst);
+            vrijemeOdDo = " u " + prijaveList.get(position).getVrijemeVoznje();
+            viewHolder.vrijeme.setText(vrijemeOdDo);
         }
+
+        if (prijaveList.get(position).getVrijemeVoznjeDo() != null) {
+            vrijemeOdDo += " do " + prijaveList.get(position).getVrijemeVoznjeDo().toString();
+            viewHolder.vrijeme.append(vrijemeOdDo);
+        }
+
 
         if (prijaveList.get(position).getNapomena() != null) {
-            viewHolder.napomena.setText(prijaveList.get(position).getNapomena().toString());
+            viewHolder.napomena.setText(prijaveList.get(position).getNapomena());
         }
 
-        if (prijaveList.get(position).getIme() != null || prijaveList.get(position).getPrezime() != null)
-        {
-            viewHolder.kandidat.setText(prijaveList.get(position).getIme()+ " " + prijaveList.get(position).getPrezime());
+        if (prijaveList.get(position).getIme() != null || prijaveList.get(position).getPrezime() != null) {
+            viewHolder.kandidat.setText(prijaveList.get(position).getIme() + " " + prijaveList.get(position).getPrezime());
         }
 
 
-        final Button btnOdobri= (Button)  convertView.findViewById(R.id.list_item_prijava_inflater_btn_odobri);
+        final Button btnOdobri = (Button) convertView.findViewById(R.id.list_item_prijava_inflater_btn_odobri);
 
-        btnOdobri.setOnClickListener(new View.OnClickListener()
-        {
+        btnOdobri.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 Log.d("test", "Ušao u on click");
 
                 final StringRequest updatePrijave = new StringRequest(Request.Method.POST, Helper.prijavaUpdate, new Response.Listener<String>() {
@@ -120,9 +123,6 @@ public class PrijaveAdapter extends BaseAdapter {
     }
 
 
-
-
-
     @Override
     public int getCount() {
         return prijaveList.size();
@@ -140,7 +140,7 @@ public class PrijaveAdapter extends BaseAdapter {
 
 
     private class ViewHolder {
-        TextView datum, kandidat,vrijeme,napomena;
+        TextView datum, kandidat, vrijeme, napomena;
         Button odobri;
     }
 
