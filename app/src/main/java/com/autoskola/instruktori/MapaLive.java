@@ -88,7 +88,7 @@ public class MapaLive extends Fragment implements GpsResponseHandler,View.OnClic
         if (googleMap == null) {
             googleMap = ((MapFragment)getActivity().getFragmentManager().findFragmentById(R.id.map)).getMap();
 
-            //googleMap.setMyLocationEnabled(true);
+            googleMap.setMyLocationEnabled(true);
 
             // check if map is created successfully or not
             if (googleMap == null) {
@@ -98,7 +98,7 @@ public class MapaLive extends Fragment implements GpsResponseHandler,View.OnClic
             }
         }
 
-    // MapHelper.getInstance().setMapToLocation(GpsTask.getInstance().getCurrentGpsLocation(),googleMap);
+     MapHelper.getInstance().setMapToLocation(MapHelper.getInstance().SARAJEVO,googleMap);
     }
 
     @Override
@@ -161,8 +161,8 @@ public class MapaLive extends Fragment implements GpsResponseHandler,View.OnClic
                         String utcDate = f.format(new Date());
 
                         komentar.setDatum(utcDate);
-                        komentar.setLtd("1");
-                        komentar.setLng("1");
+                        komentar.setLtd(String.valueOf(MapHelper.getInstance().SARAJEVO.latitude));
+                        komentar.setLng(String.valueOf(MapHelper.getInstance().SARAJEVO.longitude));
 
                         addNewComment(komentar);
                     }
@@ -194,6 +194,9 @@ public class MapaLive extends Fragment implements GpsResponseHandler,View.OnClic
              comment.setIsSynced(CommentSyncState.COMMENT_SYNC_NO.ordinal());
         // Save to local db
         GpsTask.getInstance().saveCommentOffline(getActivity(), comment);
+
+        // Draw comment on map
+        MapHelper.getInstance().drawCommentsOnMap(comment,googleMap,this.getActivity());
     }
 
     @Override
