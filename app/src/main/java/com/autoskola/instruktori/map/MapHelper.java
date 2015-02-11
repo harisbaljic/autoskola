@@ -2,10 +2,12 @@ package com.autoskola.instruktori.map;
 
 import android.app.Activity;
 import android.graphics.Color;
-import android.location.Location;
 
+import com.autoskola.instruktori.R;
+import com.autoskola.instruktori.services.model.Komentar;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -35,12 +37,10 @@ public class MapHelper {
 
     }
 
-    public void setMapToLocation(Location location,GoogleMap map){
-        // Creating a LatLng object for the current location
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+    public void setMapToLocation(LatLng location,GoogleMap map){
 
         // Showing the current location in Google Map
-        map.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        map.moveCamera(CameraUpdateFactory.newLatLng(location));
 
         // Zoom in the Google Map
         map.animateCamera(CameraUpdateFactory.zoomTo(15));
@@ -85,4 +85,19 @@ public class MapHelper {
         }
     }
 
+    public void drawCommentsOnMap (final Komentar komentar,final GoogleMap googleMap, final Activity context){
+
+        if (googleMap != null) {
+            context.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    //for (Komentar  komentar:commentsList){
+                        googleMap.addMarker(new MarkerOptions().position(new LatLng(Double.valueOf(komentar.getLtd()),Double.valueOf(komentar.getLng())))
+                                .title(komentar.getOpis())).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.comment_icon_32));
+                   // }
+                }
+            });
+
+        }
+    }
 }
