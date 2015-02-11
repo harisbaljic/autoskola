@@ -9,19 +9,18 @@ public class Obavijest {
 
     private String Sadrzaj;
     private int ObavijestId, AdministratorId;
-    @SerializedName("DatumObjave")
-    private com.autoskola.instruktori.model.Datum DatumObjave;
-    private Bitmap SlikaObavijesti;
+    @com.google.gson.annotations.SerializedName("Datum")
+    private Datum datum;
     private boolean isImageSet, isTextSet;
-
+    private String putanjaSlika;
     public Obavijest(String naslov, String sadrzaj, int obavijestId, int administratorId,
-                     com.autoskola.instruktori.model.Datum datumObjave, Bitmap slikaObavijesti){
+                     Datum Datum, String putanjaslika){
 
         Naslov = naslov;
         Sadrzaj = sadrzaj;
         ObavijestId = obavijestId;
-        DatumObjave = datumObjave;
-        SlikaObavijesti = slikaObavijesti;
+        datum = Datum;
+        putanjaSlika = putanjaslika;
         isImageSet = false;
     }
 
@@ -40,15 +39,12 @@ public class Obavijest {
 
     private String Naslov;
 
-    public String getSlikaPutanja() {
-        return SlikaPutanja;
-    }
+
 
     public void setSlikaPutanja(String slikaPutanja) {
-        SlikaPutanja = slikaPutanja;
+        slikaPutanja = slikaPutanja;
     }
 
-    private String SlikaPutanja;
 
     public String getSadrzaj() {
         return Sadrzaj;
@@ -74,20 +70,12 @@ public class Obavijest {
         AdministratorId = administratorId;
     }
 
-    public com.autoskola.instruktori.model.Datum getDatumObjave() {
-        return DatumObjave;
+    public Datum getDatumObjave() {
+        return datum;
     }
 
-    public void setDatumObjave(com.autoskola.instruktori.model.Datum datumObjave) {
-        DatumObjave = datumObjave;
-    }
-
-    public Bitmap getSlikaObavijesti() {
-        return SlikaObavijesti;
-    }
-
-    public void setSlikaObavijesti(Bitmap slikaObavijesti) {
-        SlikaObavijesti = slikaObavijesti;
+    public void setDatumObjave(Datum Datum) {
+        datum = Datum;
     }
 
     public boolean isImageSet() {
@@ -106,6 +94,13 @@ public class Obavijest {
         this.isTextSet = isTextSet;
     }
 
+    public String getPutanjaSlika() {
+        return putanjaSlika;
+    }
+
+    public void setPutanjaSlika(String putanjaSlika) {
+        this.putanjaSlika = putanjaSlika;
+    }
 
 
 }

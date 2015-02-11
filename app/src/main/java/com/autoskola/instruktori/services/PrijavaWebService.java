@@ -19,7 +19,6 @@ public interface PrijavaWebService {
     @GET("/servis_AktivnePrijave.php")
     void getAktivnePrijave(@Query("instruktorId") String instruktorId, Callback<List<Prijava>> cb);
 
-
     //http://projekt001.app.fit.ba/autoskola/servis_InstruktorZavrseneVoznje.php?instruktorId=1
     @GET("/servis_InstruktorZavrseneVoznje.php")
     void getZavrseneVoznje(@Query("instruktorId") String instruktorId, Callback<List<Prijava>> cb);

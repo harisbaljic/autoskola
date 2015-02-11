@@ -58,15 +58,15 @@ public class VoznjeAdapter extends BaseAdapter {
 
         if (prijaveList.get(position).Ime != null || prijaveList.get(position).Prezime != null)
         {
-            viewHolder.kandidat.setText(prijaveList.get(position).Ime + prijaveList.get(position).Prezime);
+            viewHolder.kandidat.setText(prijaveList.get(position).Ime +" " + prijaveList.get(position).Prezime);
         }
 
         if (prijaveList.get(position).VrijemeVoznje !=null)
         {
-            viewHolder.vrijeme.setText(prijaveList.get(position).VrijemeVoznje + prijaveList.get(position).VrijemeVoznje);
+         //   viewHolder.vrijeme.setText(prijaveList.get(position).VrijemeVoznje.toString());
         }
-        /*if(uplateList.get(position).getDatum() != null)
-            viewHolder.datum.setText(uplateList.get(position).getDatum());*/
+
+            viewHolder.datum.setText(prijaveList.get(position).getDatumVoznje());
 
         GpsTask.getInstance().saveVoznjaOffline(prijaveList.get(position),activity);
         return convertView;

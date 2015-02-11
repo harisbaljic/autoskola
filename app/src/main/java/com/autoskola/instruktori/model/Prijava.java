@@ -5,9 +5,9 @@ package com.autoskola.instruktori.model;
  */
 public class Prijava {
 
-    int PrijavaId, InstruktorId, KandidatId, AutoSkolaId;
-    Datum DatumPrijave, DatumVoznje;
-    String VrijemeVoznje;
+    int VoznjaId, InstruktorId, KandidatId, AutoSkolaId;
+    String DatumPrijave, DatumVoznje;
+    String VrijemeVoznje, VrijemeVoznjeDo, Napomena;
     String Ime;
     String Prezime;
     Byte Aktivno;
@@ -38,27 +38,29 @@ public class Prijava {
 
 
 
-    public Prijava(int prijavaId, int instruktorId, int kandidatId, int autoskolaId, Datum datumPrijave, Datum datumVoznje, String vrijemeVoznje, String imePrezime, Byte aktivno) {
-        PrijavaId = prijavaId;
+    public Prijava(int voznjaId, int instruktorId, int kandidatId, int autoskolaId, String datumPrijave,
+                   String datumVoznje, String vrijemeVoznje, String imePrezime, Byte aktivno, String vrijemeVoznjeDo, String napomena) {
+        VoznjaId = voznjaId;
         InstruktorId = instruktorId;
         KandidatId = kandidatId;
         AutoSkolaId = autoskolaId;
-        DatumPrijave = datumPrijave;
-        DatumVoznje = datumVoznje;
+        this.DatumPrijave = datumPrijave;
+        this.DatumVoznje = datumVoznje;
         VrijemeVoznje = vrijemeVoznje;
+        VrijemeVoznjeDo = vrijemeVoznjeDo;
         Aktivno = aktivno;
+        Napomena = napomena;
     }
 
-    public  Prijava(){    }
 
 
 
-    public int getPrijavaId() {
-        return PrijavaId;
+    public int getVoznjaId() {
+        return VoznjaId;
     }
 
-    public void setPrijavaId(int prijavaId) {
-        PrijavaId = prijavaId;
+    public void setVoznjaId(int voznjaId) {
+        VoznjaId = voznjaId;
     }
 
     public int getInstruktorId() {
@@ -77,19 +79,19 @@ public class Prijava {
         KandidatId = kandidatId;
     }
 
-    public Datum getDatumPrijave() {
+    public String getDatumPrijave() {
         return DatumPrijave;
     }
 
-    public void setDatumPrijave(Datum datumPrijave) {
+    public void setDatumPrijave(String datumPrijave) {
         DatumPrijave = datumPrijave;
     }
 
-    public Datum getDatumVoznje() {
+    public String getDatumVoznje() {
         return DatumVoznje;
     }
 
-    public void setDatumVoznje(Datum datumVoznje) {
+    public void setDatumVoznje(String datumVoznje) {
         DatumVoznje = datumVoznje;
     }
 
@@ -107,5 +109,21 @@ public class Prijava {
 
     public void setAktivno(Byte aktivno) {
         Aktivno = aktivno;
+    }
+
+    public String getVrijemeVoznjeDo() {
+        return VrijemeVoznjeDo;
+    }
+
+    public void setVrijemeVoznjeDo(String vrijemeVoznjeDo) {
+        VrijemeVoznjeDo = vrijemeVoznjeDo;
+    }
+
+    public String getNapomena() {
+        return Napomena;
+    }
+
+    public void setNapomena(String napomena) {
+        Napomena = napomena;
     }
 }

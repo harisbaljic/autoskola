@@ -45,7 +45,7 @@ public class Helper {
 
     }
 
-    public static String parseDateForPregled(String dbFormat) {
+    public static String parseDateForPrijava(String dbFormat) {
         Date temp;
         try {
             temp = new SimpleDateFormat("dd/MM/yyyy").parse(dbFormat);
@@ -195,6 +195,7 @@ public class Helper {
         }
 
     }
+
 
     public static String parseDateOnly(String dbFormat) {
         Date temp;
