@@ -8,11 +8,10 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ListView;
 import android.widget.Toast;
 
-import com.autoskola.instruktori.adapters.CommentAdapter;
 import com.autoskola.instruktori.helpers.NetworkConnectivity;
+import com.autoskola.instruktori.map.MapHelper;
 import com.autoskola.instruktori.services.GpsWebService;
 import com.autoskola.instruktori.services.PrijavaWebService;
 import com.autoskola.instruktori.services.model.CommentSyncState;
@@ -21,10 +20,10 @@ import com.autoskola.instruktori.services.model.Komentar;
 import com.autoskola.instruktori.services.model.Prijava;
 import com.autoskola.instruktori.services.model.Voznja;
 import com.autoskola.instruktori.services.model.VoznjaSimple;
+import com.google.android.gms.maps.GoogleMap;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 
 import io.realm.Realm;
@@ -265,7 +264,7 @@ public class GpsTask {
         }).start();
     }
 
-    public void showAllOfflineComments (final String voznjaId,final Activity context, final ListView listView){
+    public void showAllOfflineComments (final String voznjaId,final Activity context,final GoogleMap map){
         new Thread(new Runnable() {
             public void run() {
 
@@ -274,15 +273,9 @@ public class GpsTask {
                         .equalTo("voznjaId",voznjaId)
                         .findAll();
                 List <Komentar> list = new ArrayList<Komentar>(commentsList);
-                Collections.reverse(list);
-                final CommentAdapter adapter = new CommentAdapter(context, list);
 
-                context.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        listView.setAdapter(adapter);
-                    }
-                });
+                // Draw comments
+                MapHelper.getInstance().drawCommentsOnMap(list,map,context);
 
             }
         }).start();

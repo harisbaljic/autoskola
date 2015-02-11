@@ -1,5 +1,6 @@
 package com.autoskola.instruktori.services;
 
+import com.autoskola.instruktori.services.model.Obavijest;
 import com.autoskola.instruktori.services.model.Prijava;
 import com.autoskola.instruktori.services.model.VoznjaSimple;
 
@@ -25,4 +26,9 @@ public interface PrijavaWebService {
 
     @POST("/servis_VoznjeUpdate.php")
     void updateVoznje (@Body VoznjaSimple info,Callback<VoznjaSimple> cb);
+
+    //http://projekt001.app.fit.ba/autoskola/servis_ObavijestiTop10.php
+    @GET("/servis_ObavijestiTop10.php")
+    void getObavijesti(Callback<List<Obavijest>> cb);
+
 }

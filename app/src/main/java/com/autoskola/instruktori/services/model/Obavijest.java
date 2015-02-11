@@ -1,12 +1,9 @@
 package com.autoskola.instruktori.services.model;
 
 
-import android.graphics.Bitmap;
-
-import com.google.gson.annotations.SerializedName;
-
 public class Obavijest {
 
+   // {"Naslov":"asdasd","Sadrzaj":"aaaaa","KratkiSadrzaj":"aaaa","Datum":{"date":"2015-02-08 17:08:52.000000","timezone_type":3,"timezone":"UTC"},"putanjaSlika":null
     private String Sadrzaj;
     private int ObavijestId, AdministratorId;
     @com.google.gson.annotations.SerializedName("Datum")

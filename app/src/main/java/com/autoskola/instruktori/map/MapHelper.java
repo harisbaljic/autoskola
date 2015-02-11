@@ -43,7 +43,7 @@ public class MapHelper {
         map.moveCamera(CameraUpdateFactory.newLatLng(location));
 
         // Zoom in the Google Map
-        map.animateCamera(CameraUpdateFactory.zoomTo(15));
+        map.animateCamera(CameraUpdateFactory.zoomTo(10));
     }
 
     public void setMapToLocation(double lat , double lng,GoogleMap map){
@@ -54,7 +54,7 @@ public class MapHelper {
         map.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 
         // Zoom in the Google Map
-        map.animateCamera(CameraUpdateFactory.zoomTo(15));
+        map.animateCamera(CameraUpdateFactory.zoomTo(10));
 
     }
 
@@ -66,12 +66,20 @@ public class MapHelper {
 
                     public void run() {
                         if (routes.size()>0) {
-                            // Add map makers{
+                            // Add map makers for start{
                             googleMap.addMarker(new MarkerOptions().position(routes.get(0))
-                                    .title("First Point"));
+                                    .title("Pocetak")).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.map_start));
 
+                            // Add map makers for end
+                                googleMap.addMarker(new MarkerOptions().position(routes.get(routes.size()-1))
+                                        .title("Kraj")).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.map_finish));
+
+                            // Set map to location
                             setMapToLocation(routes.get(0).latitude,routes.get(0).longitude,googleMap);
+
+
                         }
+
 
                         // Add lines on map
                         googleMap.addPolyline(new PolylineOptions()
@@ -85,16 +93,31 @@ public class MapHelper {
         }
     }
 
-    public void drawCommentsOnMap (final Komentar komentar,final GoogleMap googleMap, final Activity context){
+    public void drawCommentOnMap (final Komentar komentar,final GoogleMap googleMap, final Activity context){
 
         if (googleMap != null) {
             context.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    //for (Komentar  komentar:commentsList){
                         googleMap.addMarker(new MarkerOptions().position(new LatLng(Double.valueOf(komentar.getLtd()),Double.valueOf(komentar.getLng())))
-                                .title(komentar.getOpis())).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.comment_icon_32));
-                   // }
+                                .title(komentar.getOpis())).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.map_comment));
+
+                }
+            });
+        }
+    }
+
+    public void drawCommentsOnMap (final List<Komentar> list,final GoogleMap googleMap, final Activity context){
+        if (googleMap != null) {
+            context.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    for (Komentar  komentar:list) {
+                        if (komentar.getLng() != null && komentar.getLtd() != null && komentar.getLtd().toString().length()>0 && komentar.getLng().toString().length()>0) {
+                            googleMap.addMarker(new MarkerOptions().position(new LatLng(Double.valueOf(komentar.getLtd()), Double.valueOf(komentar.getLng())))
+                                    .title(komentar.getOpis())).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.map_comment));
+                        }
+                    }
                 }
             });
 

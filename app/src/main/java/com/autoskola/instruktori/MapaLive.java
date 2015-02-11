@@ -12,10 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.Toast;
 
-import com.autoskola.instruktori.adapters.CommentAdapter;
 import com.autoskola.instruktori.gps.GpsResponseHandler;
 import com.autoskola.instruktori.gps.GpsResponseTypes;
 import com.autoskola.instruktori.gps.GpsTask;
@@ -45,8 +43,7 @@ public class MapaLive extends Fragment implements GpsResponseHandler,View.OnClic
     private static View view;
     private GoogleMap googleMap;
     private ImageButton mBtnNewComment;
-    private ListView mListViewComments;
-    private CommentAdapter mCommentAdapter;
+    private LatLng onLongClickPosition;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -63,7 +60,6 @@ public class MapaLive extends Fragment implements GpsResponseHandler,View.OnClic
         }
         mBtnNewComment = (ImageButton)view.findViewById(R.id.btnAddNewComment);
         mBtnNewComment.setOnClickListener(this);
-        mListViewComments = (ListView)view.findViewById(R.id.listViewComments);
         return view;
     }
 
@@ -89,7 +85,13 @@ public class MapaLive extends Fragment implements GpsResponseHandler,View.OnClic
             googleMap = ((MapFragment)getActivity().getFragmentManager().findFragmentById(R.id.map)).getMap();
 
             googleMap.setMyLocationEnabled(true);
-
+            googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+                @Override
+                public void onMapLongClick(LatLng latLng) {
+                    onLongClickPosition=latLng;
+                    mBtnNewComment.performClick();
+                }
+            });
             // check if map is created successfully or not
             if (googleMap == null) {
                 Toast.makeText(getActivity(),
@@ -161,8 +163,8 @@ public class MapaLive extends Fragment implements GpsResponseHandler,View.OnClic
                         String utcDate = f.format(new Date());
 
                         komentar.setDatum(utcDate);
-                        komentar.setLtd(String.valueOf(MapHelper.getInstance().SARAJEVO.latitude));
-                        komentar.setLng(String.valueOf(MapHelper.getInstance().SARAJEVO.longitude));
+                        komentar.setLtd(String.valueOf(onLongClickPosition.latitude));
+                        komentar.setLng(String.valueOf(onLongClickPosition.longitude));
 
                         addNewComment(komentar);
                     }
@@ -196,18 +198,21 @@ public class MapaLive extends Fragment implements GpsResponseHandler,View.OnClic
         GpsTask.getInstance().saveCommentOffline(getActivity(), comment);
 
         // Draw comment on map
-        MapHelper.getInstance().drawCommentOnMap(comment,googleMap,this.getActivity());
+        MapHelper.getInstance().drawCommentOnMap(comment, googleMap, this.getActivity());
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        updateCommentsListView();
+        if (googleMap!=null){
+            googleMap.clear();
+            updateCommentsListView();
+        }
     }
 
     private void updateCommentsListView (){
         if (GpsTask.getInstance().getAktivnaPrijava(getActivity().getBaseContext())!=null) {
-            GpsTask.getInstance().showAllOfflineComments(GpsTask.getInstance().getAktivnaPrijava(getActivity().getBaseContext()).VoznjaId,getActivity(),mListViewComments);
+            GpsTask.getInstance().showAllOfflineComments(GpsTask.getInstance().getAktivnaPrijava(getActivity().getBaseContext()).VoznjaId,getActivity(),googleMap);
         }
     }
 }

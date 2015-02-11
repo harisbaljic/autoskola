@@ -1,32 +1,24 @@
 package com.autoskola.instruktori.fragments;
 
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.animation.AlphaAnimation;
-import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.autoskola.instruktori.R;
 import com.autoskola.instruktori.adapters.ObavijestiAdapter;
-import com.autoskola.instruktori.helpers.AppController;
-import com.autoskola.instruktori.helpers.Helper;
+import com.autoskola.instruktori.services.PrijavaWebService;
 import com.autoskola.instruktori.services.model.Obavijest;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+
+import retrofit.Callback;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 public class FragmentObavijesti extends android.support.v4.app.Fragment {
@@ -43,214 +35,40 @@ public class FragmentObavijesti extends android.support.v4.app.Fragment {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-
-        final ProgressDialog progressDialog = new ProgressDialog(getActivity());
-        progressDialog.setMessage("Loading...");
-        progressDialog.setCancelable(false);
-        //  progressDialog.show();
-
         super.onActivityCreated(savedInstanceState);
         listObavijesti = (ListView) getActivity().findViewById(
                 R.id.activity_main_list_obavijesti);
+        getObavijesti();
+    }
 
-        final AlphaAnimation alpha = new AlphaAnimation(1.0f, 0.5f);
-        alpha.setDuration(0); // Make animation instant
-        alpha.setFillAfter(true); // Tell it to persist after the animation
-        // ends
+    public void getObavijesti (){
+        // Set endpoint
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setEndpoint("http://projekt001.app.fit.ba/autoskola")
+                .build();
 
-        adapter = new ObavijestiAdapter(getActivity(),obavijestList);
-        listObavijesti.setAdapter(adapter);
+        // Generate service
+        PrijavaWebService service = restAdapter.create(PrijavaWebService.class);
 
-        String url = Helper.getTop10Obavijesti;
-
-        StringRequest obavijesti = new StringRequest(Request.Method.POST,url, new Response.Listener<String>() {
+        // Callback
+        Callback<List<Obavijest>> callback = new Callback<List<Obavijest>>() {
             @Override
-            public void onResponse(String s) {
-
-                obavijestList = Arrays.asList(new Gson().fromJson(s.toString(), Obavijest[].class));
-                adapter = new ObavijestiAdapter(getActivity(),obavijestList);
+            public void success(List<Obavijest> obavijestiList, Response response) {
+                Log.d("GET comments - success:", "");
+                obavijestList = new ArrayList<>(obavijestiList);
+                adapter = new ObavijestiAdapter(getActivity(),obavijestiList);
                 listObavijesti.setAdapter(adapter);
-
-                listObavijesti.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        final Dialog obavijestDialog = new Dialog(
-                                getActivity(),
-                                android.R.style.Theme_Translucent);
-                        obavijestDialog
-                                .requestWindowFeature(Window.FEATURE_NO_TITLE);
-                        obavijestDialog
-                                .setContentView(R.layout.obavijest_dialog);
-                        obavijestDialog
-                                .setCanceledOnTouchOutside(true);
-                        // clanakDialog.getWindow()
-                        //   .getAttributes().windowAnimations = R.style.InitialLoadingDialogStyleAnimation;
-                        obavijestDialog.findViewById(
-                                R.id.obavijesti_dialog_img_close)
-                                .setOnClickListener(
-                                        new View.OnClickListener() {
-
-                                            @Override
-                                            public void onClick(
-                                                    View v) {
-                                                obavijestDialog.findViewById(
-                                                        R.id.obavijesti_dialog_img_close).startAnimation(alpha);
-                                                obavijestDialog
-                                                        .dismiss();
-                                            }
-                                        });
-                        TextView naslov = (TextView) obavijestDialog
-                                .findViewById(R.id.obavijesti_dialog_text_naslov);
-                        TextView tekst = (TextView) obavijestDialog
-                                .findViewById(R.id.obavijesti_dialog_text_tekst);
-
-
-                        if (obavijestList.get(position)
-                                .getNaslov() != null)
-                            naslov.setText(obavijestList.get(
-                                    position).getNaslov());
-                        else
-                            naslov.setText("Naslov");
-                        if (obavijestList.get(position)
-                                .getSadrzaj() != null)
-                            tekst.setText(obavijestList.get(
-                                    position).getSadrzaj());
-                        else
-                            naslov.setText("Tekst");
-
-                        obavijestDialog.show();
-
-                    }
-                });
-
-
-
-
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-
-            }
-        });
-
-        AppController.getInstance().addToRequestQueue(obavijesti);
-
-
-
-/*
-        JsonArrayRequest obavijestiReq = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray jsonArray) {
-                Log.d(TAG, jsonArray.toString());
-
-               for (int i=0; i<jsonArray.length(); i++)
-                {
-                    try {
-                        JSONObject obj = jsonArray.getJSONObject(i);
-                        Obavijest o = new Obavijest();
-                        o.setNaslov(obj.getString("Naslov"));
-                        o.setSadrzaj(obj.getString("Sadrzaj"));
-
-
-                        Datum d = new Datum(s,"1",1);
-
-                        o.setDatumObjave(d);
-                        o.setSlikaPutanja("http://projekt001.app.fit.ba" + obj.get("putanjaSlika"));
-                        obavijestList.add(i,o);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                }
                 adapter.notifyDataSetChanged();
 
-                listObavijesti.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        final Dialog obavijestDialog = new Dialog(
-                                getActivity(),
-                                android.R.style.Theme_Translucent);
-                        obavijestDialog
-                                .requestWindowFeature(Window.FEATURE_NO_TITLE);
-                        obavijestDialog
-                                .setContentView(R.layout.obavijest_dialog);
-                        obavijestDialog
-                                .setCanceledOnTouchOutside(true);
-                        // clanakDialog.getWindow()
-                        //   .getAttributes().windowAnimations = R.style.InitialLoadingDialogStyleAnimation;
-                        obavijestDialog.findViewById(
-                                R.id.obavijesti_dialog_img_close)
-                                .setOnClickListener(
-                                        new View.OnClickListener() {
-
-                                            @Override
-                                            public void onClick(
-                                                    View v) {
-                                                obavijestDialog.findViewById(
-                                                        R.id.obavijesti_dialog_img_close).startAnimation(alpha);
-                                                obavijestDialog
-                                                        .dismiss();
-                                            }
-                                        });
-                        TextView naslov = (TextView) obavijestDialog
-                                .findViewById(R.id.obavijesti_dialog_text_naslov);
-                        TextView tekst = (TextView) obavijestDialog
-                                .findViewById(R.id.obavijesti_dialog_text_tekst);
-
-                        if (obavijestList.get(position)
-                                .getNaslov() != null)
-                            naslov.setText(obavijestList.get(
-                                    position).getNaslov());
-                        else
-                            naslov.setText("Naslov");
-                        if (obavijestList.get(position)
-                                .getSadrzaj() != null)
-                            tekst.setText(obavijestList.get(
-                                    position).getSadrzaj());
-                        else
-                            naslov.setText("Tekst");
-
-                        obavijestDialog.show();
-
-                    }
-                });
-
             }
-        }, new Response.ErrorListener() {
+
             @Override
-            public void onErrorResponse(VolleyError volleyError) {
-
+            public void failure(RetrofitError error) {
+                Log.d("GET comments - fail:",error.toString());
             }
-        });
+        };
 
-
-
-
-
-
-        AppController.getInstance().addToRequestQueue(obavijestiReq); */
+        // GET request
+        service.getObavijesti(callback);
     }
-    Response.Listener<String> listener = new Response.Listener<String>() {
-        @Override
-        public void onResponse(String response) {
-            Log.d("Success Response: " + response.toString(),response);
-        }
-    };
-
-    Response.ErrorListener errorListener = new Response.ErrorListener() {
-        @Override
-        public void onErrorResponse(VolleyError error) {
-            if (error.networkResponse != null) {
-                Log.d("Error Response code: " +  error.networkResponse.statusCode,error.getMessage());
-            }
-        }
-    };
-
-    }
-
-
-
-
-
+}

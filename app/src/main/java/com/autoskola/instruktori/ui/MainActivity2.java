@@ -118,8 +118,8 @@ public class MainActivity2 extends FragmentActivity  implements GpsResponseHandl
         setContentView(R.layout.activity_main_activity2);
 
         // Init gps location manager
-       // GpsTask.getInstance().initGpsManager(this, LocationManager.GPS_PROVIDER);
-        GpsTask.getInstance().initGpsManager(this, LocationManager.NETWORK_PROVIDER);
+        GpsTask.getInstance().initGpsManager(this, LocationManager.GPS_PROVIDER);
+       // GpsTask.getInstance().initGpsManager(this, LocationManager.NETWORK_PROVIDER);
         // Get layout refs
         initLayoutObjects();
 

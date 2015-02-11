@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.autoskola.instruktori.R;
 import com.autoskola.instruktori.helpers.Helper;
 import com.autoskola.instruktori.services.model.Obavijest;
+import com.squareup.picasso.Picasso;
 
 import java.io.InputStream;
 import java.util.List;
@@ -77,21 +78,17 @@ public class ObavijestiAdapter extends BaseAdapter {
             viewHolder.tekst.setText(obavijestList.get(position).getSadrzaj());
 
 
-        if (!((Obavijest) getItem(position)).isImageSet()) {
-
-            Obavijest O = obavijestList.get((position));
-            String sp = obavijestList.get(position).getPutanjaSlika();
-            if(sp != null)
-                new DownloadImageTask((ImageView)viewHolder.slika).execute("http://projekt001.app.fit.ba"+sp);
-
-
-
-        }
+//        if (!((Obavijest) getItem(position)).isImageSet()) {
+//
+//            Obavijest O = obavijestList.get((position));
+//            String sp = obavijestList.get(position).getPutanjaSlika();
+//            if(sp != null)
+//                new DownloadImageTask((ImageView)viewHolder.slika).execute("http://projekt001.app.fit.ba"+sp);
+//        }
 
 
-        else {
-
-        }
+        // http://stackoverflow.com/questions/22330772/why-use-android-picasso-library-to-download-images
+        Picasso.with(activity).load("http://projekt001.app.fit.ba"+obavijestList.get(position).getPutanjaSlika()).into(viewHolder.slika);
 
         return  convertView;
     }

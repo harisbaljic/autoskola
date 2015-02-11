@@ -9,12 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.autoskola.instruktori.R;
-import com.autoskola.instruktori.adapters.CommentAdapter;
 import com.autoskola.instruktori.map.MapHelper;
 import com.autoskola.instruktori.services.GpsWebService;
 import com.autoskola.instruktori.services.model.GpsInfo;
@@ -35,14 +32,8 @@ import retrofit.client.Response;
  * Created by haris on 1/31/15.
  */
 public class FragmentZavrseneVoznjeDetalji extends DialogFragment {
-
-    private ListView mListViewKomentari;
     private GoogleMap googleMap;
     private static View view;
-    private TextView mTxtEmptyCommentsView;
-    private CommentAdapter mCommentAdapter;
-
-
 
     public static final FragmentZavrseneVoznjeDetalji newInstance(String voznjaId)
     {
@@ -72,14 +63,11 @@ public class FragmentZavrseneVoznjeDetalji extends DialogFragment {
         btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mCommentAdapter = new CommentAdapter(getActivity(),new ArrayList<Komentar>());
-                mListViewKomentari.setAdapter(mCommentAdapter);
+                googleMap.clear();
                 getDialog().dismiss();
             }
         });
 
-        mTxtEmptyCommentsView = (TextView)view.findViewById(R.id.emptyView);
-        mListViewKomentari = (ListView)view.findViewById(R.id.list_view_komentari);
         return view;
     }
 
@@ -178,13 +166,9 @@ public class FragmentZavrseneVoznjeDetalji extends DialogFragment {
             @Override
             public void success(List<Komentar> commentList, Response response) {
                 Log.d("GET comments - success:", "");
-                 if (commentList.size()==0)
-                     mTxtEmptyCommentsView.setVisibility(View.VISIBLE);
-                else
-                     mTxtEmptyCommentsView.setVisibility(View.INVISIBLE);
 
-                mCommentAdapter = new CommentAdapter(getActivity(),commentList);
-                mListViewKomentari.setAdapter(mCommentAdapter);
+                // Draw comments on map
+                MapHelper.getInstance().drawCommentsOnMap(commentList,googleMap,getActivity());
             }
 
             @Override
