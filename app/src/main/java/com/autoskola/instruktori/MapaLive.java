@@ -3,6 +3,7 @@ package com.autoskola.instruktori;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -109,7 +110,7 @@ public class MapaLive extends Fragment implements GpsResponseHandler,View.OnClic
           // Update map
          updateMap(getActivity());
       } else if (responseType == GpsResponseTypes.NEW_COMMENT){
-          updateCommentsListView();
+         // updateCommentsListView();
       }
    }
 
@@ -163,8 +164,25 @@ public class MapaLive extends Fragment implements GpsResponseHandler,View.OnClic
                         String utcDate = f.format(new Date());
 
                         komentar.setDatum(utcDate);
-                        komentar.setLtd(String.valueOf(onLongClickPosition.latitude));
-                        komentar.setLng(String.valueOf(onLongClickPosition.longitude));
+
+                        // Set gps coordinate to comment
+                        if(onLongClickPosition!=null) {
+                            komentar.setLtd(String.valueOf(onLongClickPosition.latitude));
+                            komentar.setLng(String.valueOf(onLongClickPosition.longitude));
+                            onLongClickPosition=null;
+                        }else
+                        {
+                          // Get current gps location
+                          Location location= GpsTask.getInstance().getCurrentGpsLocation();
+                            if(location!=null) {
+                                komentar.setLtd(String.valueOf(location.getLatitude()));
+                                komentar.setLng(String.valueOf(location.getLongitude()));
+                            }else
+                            {
+                                komentar.setLtd("");
+                                komentar.setLng("");
+                            }
+                        }
 
                         addNewComment(komentar);
                     }
@@ -179,9 +197,7 @@ public class MapaLive extends Fragment implements GpsResponseHandler,View.OnClic
                     // Canceled.
                 }
             });
-
             alert.show();
-
         }
     }
 
