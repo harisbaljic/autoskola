@@ -23,6 +23,7 @@ import com.autoskola.instruktori.adapters.MenuDrawerAdapter;
 import com.autoskola.instruktori.fragments.FragmentDodajVoznju;
 import com.autoskola.instruktori.fragments.FragmentObavijesti;
 import com.autoskola.instruktori.fragments.FragmentPrijave;
+import com.autoskola.instruktori.fragments.FragmentSettings;
 import com.autoskola.instruktori.fragments.FragmentSyncStatus;
 import com.autoskola.instruktori.fragments.FragmentZavrseneVoznje;
 import com.autoskola.instruktori.gps.GpsResponseHandler;
@@ -41,7 +42,8 @@ public class MainActivity2 extends FragmentActivity  implements GpsResponseHandl
             "Prijave",
             "Mapa",
             "Zavrsene voznje",
-            "Sync status"
+            "Sync status",
+            "Settings"
     };
     private MenuDrawerAdapter mDrawerAdapter;
     private DrawerLayout mDrawerLayout;
@@ -55,7 +57,7 @@ public class MainActivity2 extends FragmentActivity  implements GpsResponseHandl
     private  FragmentPrijave fragmentPrijave  = new FragmentPrijave();
     private  MapaLive fragmentMapaLive = new MapaLive();
     private  FragmentZavrseneVoznje  fragmentZavrseneVoznje  = new FragmentZavrseneVoznje();
-
+    private FragmentSettings fragmentSettings = new FragmentSettings();
 
 
 
@@ -245,10 +247,15 @@ public class MainActivity2 extends FragmentActivity  implements GpsResponseHandl
 
             case 5:
                 // Sync status
-               // fragment = new FragmentSyncStatus();
+
                 fragment = fragmentSync;
                 getActionBar().setTitle("Sync status");
+                break;
 
+            case 6:
+                // Settings
+                fragment = fragmentSettings;
+                getActionBar().setTitle("Settings");
                 break;
         }
 

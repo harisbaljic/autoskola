@@ -39,6 +39,10 @@ import retrofit.client.Response;
 public class GpsTask {
     private static GpsTask ourInstance = new GpsTask();
 
+    // Location update config
+    private static String DEFAULT_LOCATION_UPDATE_MIN_INTERVAL = "35000"; // In millisecond
+    private static String DEFAULT_LOCATION_UPDATE_MIN_DISTANCE ="10"; // In meters
+
     // Location manager
     private LocationManager mLocationManager;
     private LocationListener locationListener;
@@ -88,8 +92,26 @@ public class GpsTask {
         // Init location listener
         locationListener = new GpsLocationListener(context);
         LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 35000, 10, this.locationListener);
+
+        String distance = getMinimumDistanceBetweenLocationUpdate(context);
+        String interval = getMinimumIntervalBetweenLocationUpdate(context);
+        long min_interval = Long.valueOf(interval);
+        float  min_distance = Float.valueOf(distance);
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, min_interval, min_distance, this.locationListener);
     }
+
+    public void applyGpsLocationUpdateSettings(Context context){
+        // Init location listener
+        locationListener = new GpsLocationListener(context);
+        LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+
+        String distance = getMinimumDistanceBetweenLocationUpdate(context);
+        String interval = getMinimumIntervalBetweenLocationUpdate(context);
+        long min_interval = Long.valueOf(interval);
+        float  min_distance = Float.valueOf(distance);
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, min_interval, min_distance, this.locationListener);
+    }
+
 
     private final class GpsLocationListener implements LocationListener {
 
@@ -244,12 +266,14 @@ public class GpsTask {
                         .equalTo("isSynced",CommentSyncState.COMMENT_SYNC_NO.ordinal())
                         .findAll();
 
-                realm.beginTransaction();
-                List<Komentar>finalCommentList = new ArrayList<Komentar>();
+
+                final List<Komentar>finalCommentList = new ArrayList<Komentar>();
                 for (int i=0;i<commentList.size();i++){
+
+                    realm.beginTransaction();
                     Komentar komentar  = new Komentar();
-                    komentar.setLng("");
-                    komentar.setLtd("");
+                    komentar.setLng(komentar.getLng());
+                    komentar.setLtd(komentar.getLtd());
                     komentar.setDatum(commentList.get(i).getDatum());
                     komentar.setOpis(commentList.get(i).getOpis());
                     komentar.setVoznjaId(commentList.get(i).getVoznjaId());
@@ -257,8 +281,8 @@ public class GpsTask {
 
                     // Update local comment object
                     commentList.get(i).setIsSynced(CommentSyncState.COMMENT_SYNC_IN_PROGRESS.ordinal());
+                    realm.commitTransaction();
                 }
-                realm.commitTransaction();
                 postCommentData(finalCommentList, context);
             }
         }).start();
@@ -509,6 +533,33 @@ public class GpsTask {
             }
         }).start();
 
+    }
+
+    /*
+    Settings functions
+     */
+    public void setMinimumIntervalBetweenLocationUpdate(String value,Context context){
+        SharedPreferences.Editor editor = context.getSharedPreferences("AppSharedPereferences",Context.MODE_PRIVATE ).edit();
+        editor.putString("minInterval",value);
+        editor.commit();
+    }
+
+    public void setMinimumDistanceBetweenLocationUpdate(String value,Context context){
+        SharedPreferences.Editor editor = context.getSharedPreferences("AppSharedPereferences",Context.MODE_PRIVATE ).edit();
+        editor.putString("minDistance",value);
+        editor.commit();
+    }
+
+    public  String getMinimumIntervalBetweenLocationUpdate(Context context){
+        SharedPreferences prefs = context.getSharedPreferences("AppSharedPereferences",Context.MODE_PRIVATE);
+        String minInterval = prefs.getString("minInterval", DEFAULT_LOCATION_UPDATE_MIN_INTERVAL);
+        return minInterval;
+    }
+
+    public  String getMinimumDistanceBetweenLocationUpdate(Context context){
+        SharedPreferences prefs = context.getSharedPreferences("AppSharedPereferences",Context.MODE_PRIVATE);
+        String minDisntace = prefs.getString("minDistance", DEFAULT_LOCATION_UPDATE_MIN_DISTANCE);
+        return minDisntace;
     }
 
 }
