@@ -42,7 +42,6 @@ public class MainActivity2 extends FragmentActivity  implements GpsResponseHandl
             "Prijave",
             "Mapa",
             "Zavrsene voznje",
-            "Sync status",
             "Settings"
     };
     private MenuDrawerAdapter mDrawerAdapter;
@@ -168,43 +167,6 @@ public class MainActivity2 extends FragmentActivity  implements GpsResponseHandl
             {
                 GpsTask.getInstance().showMessage("No internet connection");
             }
-
-
-//            if (GpsTask.getInstance().getAktivnaPrijava(this)!=null) {
-//
-//                GpsInfo sarajevo = new GpsInfo();
-//                sarajevo.setVoznjaId(GpsTask.getInstance().getAktivnaPrijava(this).VoznjaId);
-//                sarajevo.setLatitude(String.valueOf(MapHelper.getInstance().SARAJEVO.latitude));
-//                sarajevo.setLongitude(String.valueOf(MapHelper.getInstance().SARAJEVO.longitude));
-//
-//                GpsInfo mostar = new GpsInfo();
-//                mostar.setVoznjaId(GpsTask.getInstance().getAktivnaPrijava(this).VoznjaId);
-//                mostar.setLatitude(String.valueOf(MapHelper.getInstance().MOSTAR.latitude));
-//                mostar.setLongitude(String.valueOf(MapHelper.getInstance().MOSTAR.longitude));
-//
-//                // Check internet connection
-//                if (NetworkConnectivity.isConnected(this)) {
-//                    // Save online
-//                    ArrayList<GpsInfo> list = new ArrayList<>();
-//                    sarajevo.setIsSynced(CommentSyncState.COMMENT_SYNC_IN_PROGRESS.ordinal());
-//                    mostar.setIsSynced(CommentSyncState.COMMENT_SYNC_IN_PROGRESS.ordinal());
-//                    list.add(sarajevo);
-//                    list.add(mostar);
-//
-//                    GpsTask.getInstance().postGpsData(list, this);
-//
-//                } else {
-//                    sarajevo.setIsSynced(CommentSyncState.COMMENT_SYNC_NO.ordinal());
-//                    mostar.setIsSynced(CommentSyncState.COMMENT_SYNC_NO.ordinal());
-//
-//                }
-//
-//                // Save offline
-//                GpsTask.getInstance().saveGpsInfoOffline(this, sarajevo);
-//                GpsTask.getInstance().saveGpsInfoOffline(this, mostar);
-//            }
-
-
         }
 
         return super.onOptionsItemSelected(item);
@@ -244,15 +206,7 @@ public class MainActivity2 extends FragmentActivity  implements GpsResponseHandl
                 fragment = fragmentZavrseneVoznje;
                 getActionBar().setTitle("Zavrsene voznje");
                 break;
-
             case 5:
-                // Sync status
-
-                fragment = fragmentSync;
-                getActionBar().setTitle("Sync status");
-                break;
-
-            case 6:
                 // Settings
                 fragment = fragmentSettings;
                 getActionBar().setTitle("Settings");

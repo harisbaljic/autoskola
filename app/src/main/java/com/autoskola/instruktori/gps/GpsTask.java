@@ -14,7 +14,7 @@ import com.autoskola.instruktori.helpers.NetworkConnectivity;
 import com.autoskola.instruktori.map.MapHelper;
 import com.autoskola.instruktori.services.GpsWebService;
 import com.autoskola.instruktori.services.PrijavaWebService;
-import com.autoskola.instruktori.services.model.CommentSyncState;
+import com.autoskola.instruktori.services.model.DataSyncState;
 import com.autoskola.instruktori.services.model.GpsInfo;
 import com.autoskola.instruktori.services.model.Komentar;
 import com.autoskola.instruktori.services.model.Prijava;
@@ -41,7 +41,7 @@ public class GpsTask {
 
     // Location update config
     private static String DEFAULT_LOCATION_UPDATE_MIN_INTERVAL = "35000"; // In millisecond
-    private static String DEFAULT_LOCATION_UPDATE_MIN_DISTANCE ="10"; // In meters
+    private static String DEFAULT_LOCATION_UPDATE_MIN_DISTANCE = "10"; // In meters
 
     // Location manager
     private LocationManager mLocationManager;
@@ -52,9 +52,9 @@ public class GpsTask {
      * This provider determines location based on
      * availability of cell tower and WiFi access points. Results are retrieved
      * by means of a network lookup.
-     *
+     * <p/>
      * GPS_PROVIDER - Name of the GPS location provider.
-     *
+     * <p/>
      * This provider determines location using
      * satellites. Depending on conditions, this provider may take a while to return
      * a location fix.
@@ -77,9 +77,9 @@ public class GpsTask {
     /**
      * This function is used to init GPS location manager and set GPS provider
      */
-    public void initGpsManager (Context context, String provider){
+    public void initGpsManager(Context context, String provider) {
         // Set network/gps state listener
-        this.communicatorInterface = (GpsResponseHandler)context;
+        this.communicatorInterface = (GpsResponseHandler) context;
 
         // Set provider
         this.LOCATION_PROVIDER = provider;
@@ -96,11 +96,11 @@ public class GpsTask {
         String distance = getMinimumDistanceBetweenLocationUpdate(context);
         String interval = getMinimumIntervalBetweenLocationUpdate(context);
         long min_interval = Long.valueOf(interval);
-        float  min_distance = Float.valueOf(distance);
+        float min_distance = Float.valueOf(distance);
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, min_interval, min_distance, this.locationListener);
     }
 
-    public void applyGpsLocationUpdateSettings(Context context){
+    public void applyGpsLocationUpdateSettings(Context context) {
         // Init location listener
         locationListener = new GpsLocationListener(context);
         LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
@@ -108,7 +108,7 @@ public class GpsTask {
         String distance = getMinimumDistanceBetweenLocationUpdate(context);
         String interval = getMinimumIntervalBetweenLocationUpdate(context);
         long min_interval = Long.valueOf(interval);
-        float  min_distance = Float.valueOf(distance);
+        float min_distance = Float.valueOf(distance);
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, min_interval, min_distance, this.locationListener);
     }
 
@@ -116,15 +116,16 @@ public class GpsTask {
     private final class GpsLocationListener implements LocationListener {
 
         private Context context;
-        public  GpsLocationListener (Context context){
+
+        public GpsLocationListener(Context context) {
             this.context = context;
         }
 
         @Override
         public void onLocationChanged(Location locFromGps) {
             // called when the listener is notified with a location update from the GPS
-            showMessage("Lat:"+locFromGps.getLatitude() + "Lng:"+locFromGps.getLongitude());
-            if (getAktivnaPrijava(context)!=null){
+            showMessage("Lat:" + locFromGps.getLatitude() + "Lng:" + locFromGps.getLongitude());
+            if (getAktivnaPrijava(context) != null) {
 
                 GpsInfo info = new GpsInfo();
                 info.setVoznjaId(getAktivnaPrijava(context).VoznjaId);
@@ -132,25 +133,23 @@ public class GpsTask {
                 info.setLongitude(String.valueOf(locFromGps.getLongitude()));
 
                 // Check internet connection
-                if(NetworkConnectivity.isConnected(context)){
+                if (NetworkConnectivity.isConnected(context)) {
                     // Save online
-                    ArrayList<GpsInfo>list = new ArrayList<>();
-                    info.setIsSynced(CommentSyncState.COMMENT_SYNC_IN_PROGRESS.ordinal());
+                    ArrayList<GpsInfo> list = new ArrayList<>();
+                    info.setIsSynced(DataSyncState.SYNC_NO.ordinal());
                     list.add(info);
-                    postGpsData(list,context);
-                }
-                else
-                    info.setIsSynced(CommentSyncState.COMMENT_SYNC_NO.ordinal());
+                    postGpsData(list, context);
+                } else
+                    info.setIsSynced(DataSyncState.SYNC_NO.ordinal());
 
                 // Save offline
                 GpsTask.getInstance().saveGpsInfoOffline(context, info);
 
                 // Notify map fragment for change
-                if (communicatorInterfaceMap!=null) {
+                if (communicatorInterfaceMap != null) {
                     communicatorInterfaceMap.onGpsResponse(GpsResponseTypes.GPS_LOCATION_CHANGED);
                 }
-            }
-            else
+            } else
                 showMessage("Lokacija je promjenjena, ali nema aktivnih prijava");
         }
 
@@ -169,48 +168,48 @@ public class GpsTask {
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
             // called when the status of the GPS provider changes
-            showMessage("GPS status changed:"+status);
+            showMessage("GPS status changed:" + status);
         }
     }
 
     private GpsTask() {
     }
 
-    public Location getCurrentGpsLocation (){
+    public Location getCurrentGpsLocation() {
         // Get current location if available
         Location location = mLocationManager.getLastKnownLocation(LOCATION_PROVIDER);
         return location;
     }
 
-    public void showMessage(String message){
-        Toast.makeText((Context)this.communicatorInterface,message,Toast.LENGTH_SHORT).show();
+    public void showMessage(String message) {
+        Toast.makeText((Context) this.communicatorInterface, message, Toast.LENGTH_SHORT).show();
     }
 
     // Save aktivna prijava to preference
-    public void startGPSTask(Prijava prijava,Context context){
-        SharedPreferences.Editor editor = context.getSharedPreferences("AppSharedPereferences",Context.MODE_PRIVATE ).edit();
+    public void startGPSTask(Prijava prijava, Context context) {
+        SharedPreferences.Editor editor = context.getSharedPreferences("AppSharedPereferences", Context.MODE_PRIVATE).edit();
         editor.putString("AktivnaPrijava", prijava.convertToJson());
         editor.commit();
 
         // Save voznja offline
-        saveVoznjaOffline(prijava,context);
+        saveVoznjaOffline(prijava, context);
     }
 
     // Remove aktivna prijava from preference
-    public void stopGpsTask(Context context){
+    public void stopGpsTask(Context context) {
         // Update status
-        updateVoznjaOfflineStatus(getAktivnaPrijava(context),context);
+        updateVoznjaOfflineStatus(getAktivnaPrijava(context), context);
 
         // Remove from preference
-        SharedPreferences.Editor editor = context.getSharedPreferences("AppSharedPereferences",Context.MODE_PRIVATE ).edit();
-        editor.putString("AktivnaPrijava",null);
+        SharedPreferences.Editor editor = context.getSharedPreferences("AppSharedPereferences", Context.MODE_PRIVATE).edit();
+        editor.putString("AktivnaPrijava", null);
         editor.commit();
     }
 
 
     // Get aktivna prijava from preferene
-    public Prijava getAktivnaPrijava (Context context){
-        SharedPreferences prefs = context.getSharedPreferences("AppSharedPereferences",Context.MODE_PRIVATE);
+    public Prijava getAktivnaPrijava(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences("AppSharedPereferences", Context.MODE_PRIVATE);
         String prijava_json = prefs.getString("AktivnaPrijava", null);
         return new Prijava().convertFromJson(prijava_json);
     }
@@ -219,7 +218,7 @@ public class GpsTask {
     // FUNCTIONS FOR SAVE COMMENTS
     //////////////////////////////////////////////////////////////
 
-    public void postCommentData(List<Komentar>listKomentara, final Context context){
+    public void postCommentData(List<Komentar> listKomentara, final Context context) {
 
         // Set endpoint
         RestAdapter restAdapter = new RestAdapter.Builder()
@@ -236,20 +235,20 @@ public class GpsTask {
                 System.out.println("POST Comments - success");
                 // Remove comments locally
                 Realm realm = Realm.getInstance(context);
-                RealmResults<Komentar> commentList = realm.where(Komentar.class)
-                       .equalTo("isSynced",CommentSyncState.COMMENT_SYNC_IN_PROGRESS.ordinal()).findAll();
-
                 realm.beginTransaction();
-                for (Komentar komentar : commentList){
-                    komentar.setIsSynced(CommentSyncState.COMMENT_SYNC_YES.ordinal());
+                RealmResults<Komentar> commentList = realm.where(Komentar.class)
+                        .equalTo("isSynced", DataSyncState.SYNC_NO.ordinal()).findAll();
+                for (Komentar komentar : commentList) {
+                    komentar.setIsSynced(DataSyncState.SYNC_YES.ordinal());
                 }
                 realm.commitTransaction();
+
                 GpsTask.getInstance().showMessage("Comment synced successfuly");
             }
 
             @Override
             public void failure(RetrofitError error) {
-                System.out.println("POST Comments - fail:"+error);
+                System.out.println("POST Comments - fail:" + error);
                 //GpsTask.getInstance().communicatorInterface.onGpsResponse(GpsResponseTypes.GPS_SYNC_FAIL);
             }
         };
@@ -258,55 +257,59 @@ public class GpsTask {
         service.postGpsKomentar(listKomentara, callback);
     }
 
-    public void syncComments(final Context context){
+    public void syncComments(final Context context) {
         new Thread(new Runnable() {
             public void run() {
                 Realm realm = Realm.getInstance(context);
                 RealmResults<Komentar> commentList = realm.where(Komentar.class)
-                        .equalTo("isSynced",CommentSyncState.COMMENT_SYNC_NO.ordinal())
+                        .equalTo("isSynced", DataSyncState.SYNC_NO.ordinal())
                         .findAll();
+                System.out.println("Broj komentara COMMENT_SYNC_NO:" + commentList.size());
+
+                List<Komentar> finalCommentList = new ArrayList<>();
+                //realm.beginTransaction();
+                for (int i = 0; i < commentList.size(); i++) {
 
 
-                final List<Komentar>finalCommentList = new ArrayList<Komentar>();
-                for (int i=0;i<commentList.size();i++){
-
-                    realm.beginTransaction();
-                    Komentar komentar  = new Komentar();
-                    komentar.setLng(komentar.getLng());
-                    komentar.setLtd(komentar.getLtd());
+                    Komentar komentar = new Komentar();
+                    komentar.setLng(commentList.get(i).getLng());
+                    komentar.setLtd(commentList.get(i).getLtd());
                     komentar.setDatum(commentList.get(i).getDatum());
                     komentar.setOpis(commentList.get(i).getOpis());
                     komentar.setVoznjaId(commentList.get(i).getVoznjaId());
                     finalCommentList.add(komentar);
 
                     // Update local comment object
-                    commentList.get(i).setIsSynced(CommentSyncState.COMMENT_SYNC_IN_PROGRESS.ordinal());
-                    realm.commitTransaction();
+                    // commentList.get(i).setIsSynced(CommentSyncState.COMMENT_SYNC_IN_PROGRESS.ordinal());
+
+                    System.out.println("for petlja");
                 }
+                //realm.commitTransaction();
                 postCommentData(finalCommentList, context);
+                System.out.println("post ide prije");
             }
         }).start();
     }
 
-    public void showAllOfflineComments (final String voznjaId,final Activity context,final GoogleMap map){
+    public void showAllOfflineComments(final String voznjaId, final Activity context, final GoogleMap map) {
         new Thread(new Runnable() {
             public void run() {
 
                 Realm realm = Realm.getInstance(context);
                 RealmResults<Komentar> commentsList = realm.where(Komentar.class)
-                        .equalTo("voznjaId",voznjaId)
+                        .equalTo("voznjaId", voznjaId)
                         .findAll();
-                List <Komentar> list = new ArrayList<Komentar>(commentsList);
+                List<Komentar> list = new ArrayList<Komentar>(commentsList);
 
                 // Draw comments
-                MapHelper.getInstance().drawCommentsOnMap(list,map,context);
+                MapHelper.getInstance().drawCommentsOnMap(list, map, context);
 
             }
         }).start();
     }
 
 
-    public void saveCommentOffline(Context context,Komentar comment){
+    public void saveCommentOffline(Context context, Komentar comment) {
 
         // Get realm instance
         Realm realm = Realm.getInstance(context);
@@ -332,7 +335,7 @@ public class GpsTask {
     // FUNCTIONS FOR SAVE GPS DATA
     //////////////////////////////////////////////////////////////
 
-    public void postGpsData (List<GpsInfo> gpsData, final Context context){
+    public void postGpsData(List<GpsInfo> gpsData, final Context context) {
 
         // Set endpoint
         RestAdapter restAdapter = new RestAdapter.Builder()
@@ -350,20 +353,19 @@ public class GpsTask {
                 // Remove comments locally
                 Realm realm = Realm.getInstance(context);
                 RealmResults<GpsInfo> commentList = realm.where(GpsInfo.class)
-                        .equalTo("isSynced",CommentSyncState.COMMENT_SYNC_IN_PROGRESS.ordinal()).findAll();
+                        .equalTo("isSynced", DataSyncState.SYNC_NO.ordinal()).findAll();
 
                 realm.beginTransaction();
                 for (GpsInfo komentar : commentList)
-                    komentar.setIsSynced(CommentSyncState.COMMENT_SYNC_YES.ordinal());
+                    komentar.setIsSynced(DataSyncState.SYNC_YES.ordinal());
 
                 realm.commitTransaction();
-
                 GpsTask.getInstance().communicatorInterface.onGpsResponse(GpsResponseTypes.GPS_SYNC_SUCCESS);
             }
 
             @Override
             public void failure(RetrofitError error) {
-                System.out.println("POST GpsInfo - fail:"+error);
+                System.out.println("POST GpsInfo - fail:" + error);
                 GpsTask.getInstance().communicatorInterface.onGpsResponse(GpsResponseTypes.GPS_SYNC_FAIL);
             }
         };
@@ -373,31 +375,23 @@ public class GpsTask {
     }
 
     // Sync local db to server
-    public void syncGpsInfo (final Context context){
+    public void syncGpsInfo(final Context context) {
 
         new Thread(new Runnable() {
             public void run() {
                 Realm realm = Realm.getInstance(context);
                 RealmResults<GpsInfo> gpsList = realm.where(GpsInfo.class).
-                        equalTo("isSynced", CommentSyncState.COMMENT_SYNC_NO.ordinal()).
+                        equalTo("isSynced", DataSyncState.SYNC_NO.ordinal()).
                         findAll();
-                realm.beginTransaction();
 
-                // Set progress
-                ArrayList<GpsInfo> list  = new ArrayList<>();
+                ArrayList<GpsInfo> list = new ArrayList<>();
                 for (GpsInfo info : gpsList) {
                     GpsInfo obj = new GpsInfo();
                     obj.setLatitude(info.getLatitude());
                     obj.setLongitude(info.getLongitude());
                     obj.setVoznjaId(info.getVoznjaId());
                     list.add(obj);
-                    System.out.println("Lat: "+info.getLatitude() + "Lng:"+info.getLongitude() + "Status:"+info.getIsSynced());
-                    info.setIsSynced(CommentSyncState.COMMENT_SYNC_IN_PROGRESS.ordinal());
                 }
-
-                // Commit update
-                realm.commitTransaction();
-
                 // Post
                 postGpsData(list, context);
             }
@@ -405,7 +399,7 @@ public class GpsTask {
     }
 
     // Save gps info object  to local db
-    public void saveGpsInfoOffline (Context context,GpsInfo gpsObject){
+    public void saveGpsInfoOffline(Context context, GpsInfo gpsObject) {
         // Get realm instance
         Realm realm = Realm.getInstance(context);
 
@@ -426,35 +420,36 @@ public class GpsTask {
     // FUNCTIONS FOR SAVE VOZNJA
     //////////////////////////////////////////////////////////////
 
-    private  void updateVoznjaOfflineStatus (final Prijava prijava,final  Context context){
+    private void updateVoznjaOfflineStatus(final Prijava prijava, final Context context) {
 
         new Thread(new Runnable() {
             public void run() {
                 Realm realm = Realm.getInstance(context);
                 realm.beginTransaction();
                 Voznja voznja = realm.where(Voznja.class)
-                        .equalTo("voznjaId",prijava.VoznjaId)
+                        .equalTo("voznjaId", prijava.VoznjaId)
                         .findFirst();
 
-                if (voznja !=null){
+                if (voznja != null) {
                     voznja.setStatus(1);
                     realm.commitTransaction();
+                    System.out.println("Status je update");
                 }
             }
         }).start();
 
     }
 
-    public void saveVoznjaOffline (Prijava prijava, Context context){
+    public void saveVoznjaOffline(Prijava prijava, Context context) {
 
         // Get realm instance
         Realm realm = Realm.getInstance(context);
         Voznja voznja = realm.where(Voznja.class)
-                .equalTo("voznjaId",prijava.VoznjaId)
+                .equalTo("voznjaId", prijava.VoznjaId)
                 .findFirst();
 
         // Prevent duplication
-        if (voznja == null){
+        if (voznja == null) {
             // Begin db transactions
             realm.beginTransaction();
 
@@ -465,6 +460,7 @@ public class GpsTask {
             realmObject.setDate(Calendar.getInstance().getTime().toString());
             realmObject.setIme(prijava.Ime);
             realmObject.setPrezime(prijava.Prezime);
+            realmObject.setIsSynced(DataSyncState.SYNC_NO.ordinal());
 
             // Save to db
             realm.commitTransaction();
@@ -472,7 +468,7 @@ public class GpsTask {
 
     }
 
-    private void postVoznja ( final VoznjaSimple voznja,final Context context){
+    private void postVoznja(final VoznjaSimple voznja, final Context context) {
 
         // Set endpoint
         RestAdapter restAdapter = new RestAdapter.Builder()
@@ -492,16 +488,16 @@ public class GpsTask {
                 Realm realm = Realm.getInstance(context);
                 realm.beginTransaction();
                 Voznja object = realm.where(Voznja.class)
-                        .equalTo("voznjaId",voznja.getVoznjaId())
+                        .equalTo("voznjaId", voznja.getVoznjaId())
                         .findFirst();
 
-               object.setIsSynced(CommentSyncState.COMMENT_SYNC_YES.ordinal());
-               realm.commitTransaction();
+                object.setIsSynced(DataSyncState.SYNC_YES.ordinal());
+                realm.commitTransaction();
             }
 
             @Override
             public void failure(RetrofitError error) {
-                Log.d("Update voznje - fail:",error.toString() + error.getResponse());
+                Log.d("Update voznje - fail:", error.toString() + error.getResponse());
             }
         };
 
@@ -509,55 +505,48 @@ public class GpsTask {
         service.updateVoznje(voznja, callback);
     }
 
-    public void syncVoznjeStatus (final Context context){
+    public void syncVoznjeStatus(final Context context) {
 
         new Thread(new Runnable() {
             public void run() {
                 Realm realm = Realm.getInstance(context);
                 RealmResults<Voznja> voznjeList = realm.where(Voznja.class)
-                        .equalTo("status", 1)
-                        .notEqualTo("isSynced", CommentSyncState.COMMENT_SYNC_NO.ordinal())
+                        //.equalTo("status", 1)
+                        .equalTo("isSynced", DataSyncState.SYNC_NO.ordinal())
                         .findAll();
-
-                realm.beginTransaction();
                 for (Voznja object : voznjeList) {
                     VoznjaSimple simple = new VoznjaSimple();
                     simple.setVoznjaId(object.getVoznjaId());
                     simple.setStatus(object.getStatus());
-                    object.setIsSynced(CommentSyncState.COMMENT_SYNC_IN_PROGRESS.ordinal());
                     postVoznja(simple, context);
                 }
-                realm.commitTransaction();
-
-
             }
         }).start();
-
     }
 
     /*
     Settings functions
      */
-    public void setMinimumIntervalBetweenLocationUpdate(String value,Context context){
-        SharedPreferences.Editor editor = context.getSharedPreferences("AppSharedPereferences",Context.MODE_PRIVATE ).edit();
-        editor.putString("minInterval",value);
+    public void setMinimumIntervalBetweenLocationUpdate(String value, Context context) {
+        SharedPreferences.Editor editor = context.getSharedPreferences("AppSharedPereferences", Context.MODE_PRIVATE).edit();
+        editor.putString("minInterval", value);
         editor.commit();
     }
 
-    public void setMinimumDistanceBetweenLocationUpdate(String value,Context context){
-        SharedPreferences.Editor editor = context.getSharedPreferences("AppSharedPereferences",Context.MODE_PRIVATE ).edit();
-        editor.putString("minDistance",value);
+    public void setMinimumDistanceBetweenLocationUpdate(String value, Context context) {
+        SharedPreferences.Editor editor = context.getSharedPreferences("AppSharedPereferences", Context.MODE_PRIVATE).edit();
+        editor.putString("minDistance", value);
         editor.commit();
     }
 
-    public  String getMinimumIntervalBetweenLocationUpdate(Context context){
-        SharedPreferences prefs = context.getSharedPreferences("AppSharedPereferences",Context.MODE_PRIVATE);
+    public String getMinimumIntervalBetweenLocationUpdate(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences("AppSharedPereferences", Context.MODE_PRIVATE);
         String minInterval = prefs.getString("minInterval", DEFAULT_LOCATION_UPDATE_MIN_INTERVAL);
         return minInterval;
     }
 
-    public  String getMinimumDistanceBetweenLocationUpdate(Context context){
-        SharedPreferences prefs = context.getSharedPreferences("AppSharedPereferences",Context.MODE_PRIVATE);
+    public String getMinimumDistanceBetweenLocationUpdate(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences("AppSharedPereferences", Context.MODE_PRIVATE);
         String minDisntace = prefs.getString("minDistance", DEFAULT_LOCATION_UPDATE_MIN_DISTANCE);
         return minDisntace;
     }

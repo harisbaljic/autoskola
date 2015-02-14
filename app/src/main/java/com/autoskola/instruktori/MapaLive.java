@@ -20,7 +20,7 @@ import com.autoskola.instruktori.gps.GpsResponseTypes;
 import com.autoskola.instruktori.gps.GpsTask;
 import com.autoskola.instruktori.helpers.NetworkConnectivity;
 import com.autoskola.instruktori.map.MapHelper;
-import com.autoskola.instruktori.services.model.CommentSyncState;
+import com.autoskola.instruktori.services.model.DataSyncState;
 import com.autoskola.instruktori.services.model.GpsInfo;
 import com.autoskola.instruktori.services.model.Komentar;
 import com.google.android.gms.maps.GoogleMap;
@@ -202,14 +202,12 @@ public class MapaLive extends Fragment implements GpsResponseHandler,View.OnClic
     }
 
     private void addNewComment(Komentar comment) {
+        comment.setIsSynced(DataSyncState.SYNC_NO.ordinal());
          if(NetworkConnectivity.isConnected(getActivity())) {
-             comment.setIsSynced(CommentSyncState.COMMENT_SYNC_IN_PROGRESS.ordinal());
              List<Komentar> list  = new ArrayList<>();
              list.add(comment);
              GpsTask.getInstance().postCommentData(list,getActivity());
          }
-        else
-             comment.setIsSynced(CommentSyncState.COMMENT_SYNC_NO.ordinal());
         // Save to local db
         GpsTask.getInstance().saveCommentOffline(getActivity(), comment);
 

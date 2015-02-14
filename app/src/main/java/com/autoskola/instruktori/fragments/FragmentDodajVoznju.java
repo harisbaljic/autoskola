@@ -152,8 +152,6 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
     }
 
 
-
-
     private void setListOnClickListener (){
         this.list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -191,7 +189,6 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
                                 }
                             })
                             .show();
-
                 }
                 else
                 {
@@ -361,7 +358,7 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
                                         // Try sync data with server
                                         tryPostData(selectedPrijava);
 
-                                        mOfflineObjectAdapter.notifyDataSetChanged();
+                                        getAllOfflineVoznje();
 
                                     }
                                 })
@@ -396,7 +393,7 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
                                         // Start gps task
                                         Prijava prijava = items.get(position);
                                         GpsTask.getInstance().startGPSTask(prijava,parent.getContext());
-                                        mOfflineObjectAdapter.notifyDataSetChanged();
+                                        getAllOfflineVoznje();
 
                                     }
                                 })
@@ -423,6 +420,7 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
 
             // Sync comments
             GpsTask.getInstance().syncComments(getActivity());
+            GpsTask.getInstance().syncGpsInfo(getActivity());
         }
         else
         {
