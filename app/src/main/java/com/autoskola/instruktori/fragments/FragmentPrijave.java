@@ -94,6 +94,7 @@ public class FragmentPrijave extends android.support.v4.app.Fragment {
                     Helper.prijavaSelect,
                     new Response.Listener<String>() {
 
+//
                         @Override
                         public void onResponse(String arg0) {
                             Log.d("temp", arg0.toString());
