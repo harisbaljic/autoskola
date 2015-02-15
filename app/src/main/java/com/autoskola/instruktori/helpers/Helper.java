@@ -22,7 +22,7 @@ public class Helper {
     public static String prijavaSelect = "http://projekt001.app.fit.ba/autoskola/servis_Prijave.php";
     public static String aktivnePrijave = "http://projekt001.app.fit.ba/autoskola/servis_AktivnePrijave.php";
     public static String prijavaUpdate = "http://projekt001.app.fit.ba/autoskola/servis_PrijaveUpdate.php";
-
+    public static String SelectKorisnikID = "http://projekt001.app.fit.ba//autoskola/servis_SelectInstruktorId.php";
 
     public static String parseDateForObavijesti(String dbFormat) {
         Date temp;

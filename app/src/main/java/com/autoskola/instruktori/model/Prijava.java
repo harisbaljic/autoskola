@@ -5,7 +5,7 @@ package com.autoskola.instruktori.model;
  */
 public class Prijava {
 
-    int VoznjaId, InstruktorId, KandidatId, AutoSkolaId;
+    int VoznjaId, InstruktorId, KandidatId;
     String DatumPrijave, DatumVoznje;
     String VrijemeVoznje, VrijemeVoznjeDo, Napomena;
     String Ime;
@@ -20,14 +20,6 @@ public class Prijava {
         Prezime = prezime;
     }
 
-    public int getAutoSkolaId() {
-        return AutoSkolaId;
-    }
-
-    public void setAutoSkolaId(int autoSkolaId) {
-        AutoSkolaId = autoSkolaId;
-    }
-
     public String getIme() {
         return Ime;
     }
@@ -38,16 +30,17 @@ public class Prijava {
 
 
 
-    public Prijava(int voznjaId, int instruktorId, int kandidatId, int autoskolaId, String datumPrijave,
-                   String datumVoznje, String vrijemeVoznje, String imePrezime, Byte aktivno, String vrijemeVoznjeDo, String napomena) {
+    public Prijava(int voznjaId, String datumPrijave,int kandidatId, String datumVoznje,
+                    String vrijemeVoznje,String vrijemeVoznjeDo,String napomena, Byte aktivno, String ime, String prezime,  int instruktorId  ) {
         VoznjaId = voznjaId;
         InstruktorId = instruktorId;
         KandidatId = kandidatId;
-        AutoSkolaId = autoskolaId;
         this.DatumPrijave = datumPrijave;
         this.DatumVoznje = datumVoznje;
         VrijemeVoznje = vrijemeVoznje;
         VrijemeVoznjeDo = vrijemeVoznjeDo;
+        Ime = ime;
+        Prezime = prezime;
         Aktivno = aktivno;
         Napomena = napomena;
     }
