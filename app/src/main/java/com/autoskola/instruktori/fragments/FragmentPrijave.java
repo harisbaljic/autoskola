@@ -57,7 +57,7 @@ public class FragmentPrijave extends android.support.v4.app.Fragment {
         };
 
         // GET request
-        service.getInstruktorId("11",callback);
+        service.getInstruktorId(korisnikId,callback);
     }
 
     @Override
