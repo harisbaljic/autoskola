@@ -31,4 +31,6 @@ public interface PrijavaWebService {
     @GET("/servis_ObavijestiTop10.php")
     void getObavijesti(Callback<List<Obavijest>> cb);
 
+    @GET("/servis_SelectInstruktorId.php")
+    void getInstruktorId(@Query("korisnikId") String instruktorId, Callback<Prijava> cb);
 }
