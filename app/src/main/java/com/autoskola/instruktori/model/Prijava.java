@@ -5,12 +5,24 @@ package com.autoskola.instruktori.model;
  */
 public class Prijava {
 
-    int VoznjaId, InstruktorId, KandidatId;
-    String DatumPrijave, DatumVoznje;
+    int VoznjaId,  KandidatId;
+    String  DatumVoznje;
     String VrijemeVoznje, VrijemeVoznjeDo, Napomena;
     String Ime;
     String Prezime;
-    Byte Aktivno;
+
+
+    public Prijava(int voznjaId, int kandidatId, String datumVoznje,
+                    String vrijemeVoznje,String vrijemeVoznjeDo,String napomena, String ime, String prezime ) {
+        VoznjaId = voznjaId;
+        KandidatId = kandidatId;
+        this.DatumVoznje = datumVoznje;
+        VrijemeVoznje = vrijemeVoznje;
+        VrijemeVoznjeDo = vrijemeVoznjeDo;
+        Ime = ime;
+        Prezime = prezime;
+        Napomena = napomena;
+    }
 
     public String getPrezime() {
         return Prezime;
@@ -27,27 +39,6 @@ public class Prijava {
     public void setIme(String ime) {
         Ime = ime;
     }
-
-
-
-    public Prijava(int voznjaId, String datumPrijave,int kandidatId, String datumVoznje,
-                    String vrijemeVoznje,String vrijemeVoznjeDo,String napomena, Byte aktivno, String ime, String prezime,  int instruktorId  ) {
-        VoznjaId = voznjaId;
-        InstruktorId = instruktorId;
-        KandidatId = kandidatId;
-        this.DatumPrijave = datumPrijave;
-        this.DatumVoznje = datumVoznje;
-        VrijemeVoznje = vrijemeVoznje;
-        VrijemeVoznjeDo = vrijemeVoznjeDo;
-        Ime = ime;
-        Prezime = prezime;
-        Aktivno = aktivno;
-        Napomena = napomena;
-    }
-
-
-
-
     public int getVoznjaId() {
         return VoznjaId;
     }
@@ -56,28 +47,12 @@ public class Prijava {
         VoznjaId = voznjaId;
     }
 
-    public int getInstruktorId() {
-        return InstruktorId;
-    }
-
-    public void setInstruktorId(int instruktorId) {
-        InstruktorId = instruktorId;
-    }
-
     public int getKandidatId() {
         return KandidatId;
     }
 
     public void setKandidatId(int kandidatId) {
         KandidatId = kandidatId;
-    }
-
-    public String getDatumPrijave() {
-        return DatumPrijave;
-    }
-
-    public void setDatumPrijave(String datumPrijave) {
-        DatumPrijave = datumPrijave;
     }
 
     public String getDatumVoznje() {
@@ -94,14 +69,6 @@ public class Prijava {
 
     public void setVrijemeVoznje(String vrijemeVoznje) {
         VrijemeVoznje = vrijemeVoznje;
-    }
-
-    public Byte getAktivno() {
-        return Aktivno;
-    }
-
-    public void setAktivno(Byte aktivno) {
-        Aktivno = aktivno;
     }
 
     public String getVrijemeVoznjeDo() {

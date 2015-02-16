@@ -41,6 +41,7 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
 
     private VoznjeAdapter adapter;
     private SyncStatusAdapter mOfflineObjectAdapter;
+    private String korId = "";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -48,13 +49,43 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
 
        View view =   inflater.inflate(R.layout.fragment_dodaj_voznju, container, false);
        list = (ListView) view.findViewById( R.id.activity_main_list_voznje);
-       txtErrorLog = (TextView)view.findViewById(R.id.txtErrorLog);
+        getInstruktorId(AppController.getInstance().getKorisnik().getKorisnikId() + "");
+        txtErrorLog = (TextView)view.findViewById(R.id.txtErrorLog);
        return view;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        getInstruktorId(AppController.getInstance().getKorisnik().getKorisnikId() + "");
+
+    }
+
+    public void getInstruktorId(String korisnikId){
+        // Set endpoint
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setEndpoint("http://projekt001.app.fit.ba/autoskola")
+                .build();
+
+        // Generate service
+        PrijavaWebService service = restAdapter.create(PrijavaWebService.class);
+
+        // Callback
+        Callback<com.autoskola.instruktori.services.model.Prijava> callback = new Callback<com.autoskola.instruktori.services.model.Prijava>() {
+            @Override
+            public void success(com.autoskola.instruktori.services.model.Prijava prijava, retrofit.client.Response response) {
+                Log.d("GET Instruktor - success:",String.valueOf(prijava.getInstruktorId()));
+                korId = String.valueOf(prijava.getInstruktorId());
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.d("GPS Instruktor - fail:",error.toString());
+            }
+        };
+
+        // GET request
+        service.getInstruktorId(korisnikId,callback);
     }
 
 
@@ -65,11 +96,12 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
 
         if (NetworkConnectivity.isConnected(this.getActivity())){
             // Instruktor id
-            String korisnikId = AppController.getInstance().getKorisnik().getKorisnikId();
+         //   getInstruktorId(AppController.getInstance().getKorisnik().getKorisnikId() + "");
+
 
             GpsTask.getInstance().showMessage("Ima interneta, pokusavam getati voznje");
             // Get all aktivne prijave
-            getAktivnePrijave(korisnikId);
+            getAktivnePrijave(korId);
 
             // ListView item on click listener
             setListOnClickListener();
