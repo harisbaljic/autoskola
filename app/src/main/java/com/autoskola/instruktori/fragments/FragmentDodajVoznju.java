@@ -47,21 +47,13 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-       View view =   inflater.inflate(R.layout.fragment_dodaj_voznju, container, false);
-       list = (ListView) view.findViewById( R.id.activity_main_list_voznje);
-        getInstruktorId(AppController.getInstance().getKorisnik().getKorisnikId() + "");
-        txtErrorLog = (TextView)view.findViewById(R.id.txtErrorLog);
-       return view;
+        View view = inflater.inflate(R.layout.fragment_dodaj_voznju, container, false);
+        list = (ListView) view.findViewById(R.id.activity_main_list_voznje);
+        txtErrorLog = (TextView) view.findViewById(R.id.txtErrorLog);
+        return view;
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        getInstruktorId(AppController.getInstance().getKorisnik().getKorisnikId() + "");
-
-    }
-
-    public void getInstruktorId(String korisnikId){
+    public void getInstruktorId(String korisnikId) {
         // Set endpoint
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint("http://projekt001.app.fit.ba/autoskola")
@@ -74,63 +66,57 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
         Callback<com.autoskola.instruktori.services.model.Prijava> callback = new Callback<com.autoskola.instruktori.services.model.Prijava>() {
             @Override
             public void success(com.autoskola.instruktori.services.model.Prijava prijava, retrofit.client.Response response) {
-                Log.d("GET Instruktor - success:",String.valueOf(prijava.getInstruktorId()));
+                Log.d("GET Instruktor - success:", String.valueOf(prijava.getInstruktorId()));
                 korId = String.valueOf(prijava.getInstruktorId());
+
+                if (NetworkConnectivity.isConnected(getActivity())) {
+                    GpsTask.getInstance().showMessage("Ima interneta, pokusavam getati voznje");
+                    // Get all aktivne prijave
+                    getAktivnePrijave(korId);
+
+                    // ListView item on click listener
+                    setListOnClickListener();
+                } else {
+                    // Offline data
+                    getAllOfflineVoznje();
+                    setListOnClickListenerForOffline();
+                    GpsTask.getInstance().showMessage("Nemas internet");
+                }
             }
 
             @Override
             public void failure(RetrofitError error) {
-                Log.d("GPS Instruktor - fail:",error.toString());
+                Log.d("GPS Instruktor - fail:", error.toString());
             }
         };
 
         // GET request
-        service.getInstruktorId(korisnikId,callback);
+        service.getInstruktorId(korisnikId, callback);
     }
 
 
     @Override
     public void onResume() {
         super.onResume();
-
-
-        if (NetworkConnectivity.isConnected(this.getActivity())){
-            // Instruktor id
-         //   getInstruktorId(AppController.getInstance().getKorisnik().getKorisnikId() + "");
-
-
-            GpsTask.getInstance().showMessage("Ima interneta, pokusavam getati voznje");
-            // Get all aktivne prijave
-            getAktivnePrijave(korId);
-
-            // ListView item on click listener
-            setListOnClickListener();
-
-        }
-        else
-        {
-            // Offline data
-            getAllOfflineVoznje();
-            setListOnClickListenerForOffline();
-            GpsTask.getInstance().showMessage("Nemas internet");
-        }
+        getInstruktorId(AppController.getInstance().getKorisnik().getKorisnikId() + "");
     }
 
-    private  void getAllOfflineVoznje () {
+
+    private void getAllOfflineVoznje() {
         new Thread(new Runnable() {
             public void run() {
 
                 Realm realm = Realm.getInstance(getActivity());
                 final RealmResults<Voznja> voznjaList = realm.where(Voznja.class)
-                        .equalTo("status",0)
+                        .equalTo("status", 0)
                         .findAll();
                 itemsOffline = new ArrayList<Voznja>(voznjaList);
 
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                       mOfflineObjectAdapter = new SyncStatusAdapter(getActivity(),voznjaList);
-                       list.setAdapter(mOfflineObjectAdapter);
+                        mOfflineObjectAdapter = new SyncStatusAdapter(getActivity(), voznjaList);
+                        list.setAdapter(mOfflineObjectAdapter);
                     }
                 });
 
@@ -140,7 +126,7 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
     }
 
 
-    private void refreshAktivnePrijave (){
+    private void refreshAktivnePrijave() {
 
         // Instruktor id
         String korisnikId = AppController.getInstance().getKorisnik().getKorisnikId();
@@ -149,7 +135,7 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
         getAktivnePrijave(korisnikId);
     }
 
-    public void getAktivnePrijave(String instruktorId){
+    public void getAktivnePrijave(String instruktorId) {
         // Set endpoint
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint("http://projekt001.app.fit.ba/autoskola")
@@ -162,34 +148,34 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
         Callback<List<com.autoskola.instruktori.services.model.Prijava>> callback = new Callback<List<com.autoskola.instruktori.services.model.Prijava>>() {
             @Override
             public void success(List<com.autoskola.instruktori.services.model.Prijava> prijave, Response response) {
-                Log.d("GET Aktivne prijave - success:","");
+                Log.d("GET Aktivne prijave - success:", "");
                 txtErrorLog.setVisibility(View.INVISIBLE);
                 items = new ArrayList<>(prijave);
                 adapter = new VoznjeAdapter(getActivity(), items);
                 list.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
-                GpsTask.getInstance().showMessage("Vraceno je :"+prijave.size() +" voznji");
+                GpsTask.getInstance().showMessage("Vraceno je :" + prijave.size() + " voznji");
             }
 
             @Override
             public void failure(RetrofitError error) {
-                Log.d("GET Aktivne prijave - fail:",error.toString());
+                Log.d("GET Aktivne prijave - fail:", error.toString());
                 txtErrorLog.setVisibility(View.VISIBLE);
                 txtErrorLog.setText(error.getLocalizedMessage());
             }
         };
 
         // GET request
-        service.getAktivnePrijave(instruktorId,callback);
+        service.getAktivnePrijave(instruktorId, callback);
     }
 
 
-    private void setListOnClickListener (){
+    private void setListOnClickListener() {
         this.list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(final AdapterView<?> parent, View view, final int position, long id) {
 
-                if (GpsTask.getInstance().getAktivnaPrijava(parent.getContext()) == null){
+                if (GpsTask.getInstance().getAktivnaPrijava(parent.getContext()) == null) {
                     // Gps task not active
                     new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
                             .setTitleText("Da li si siguran?")
@@ -215,20 +201,18 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
 
                                     // Start gps task
                                     Prijava prijava = items.get(position);
-                                    GpsTask.getInstance().startGPSTask(prijava,parent.getContext());
+                                    GpsTask.getInstance().startGPSTask(prijava, parent.getContext());
                                     adapter.notifyDataSetChanged();
 
                                 }
                             })
                             .show();
-                }
-                else
-                {
+                } else {
 
                     // Gps task is active
                     // Check if selected objects in preference
                     final Prijava selectedPrijava = items.get(position);
-                    if(GpsTask.getInstance().getAktivnaPrijava(parent.getContext()).VoznjaId.matches(selectedPrijava.VoznjaId)){
+                    if (GpsTask.getInstance().getAktivnaPrijava(parent.getContext()).VoznjaId.matches(selectedPrijava.VoznjaId)) {
 
                         new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
                                 .setTitleText("Da li si siguran?")
@@ -264,9 +248,7 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
                                 })
                                 .show();
 
-                    }
-                    else
-                    {
+                    } else {
                         // Gps task is active
                         new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
                                 .setTitleText("Da li si siguran?")
@@ -292,7 +274,7 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
 
                                         // Start gps task
                                         Prijava prijava = items.get(position);
-                                        GpsTask.getInstance().startGPSTask(prijava,parent.getContext());
+                                        GpsTask.getInstance().startGPSTask(prijava, parent.getContext());
                                         adapter.notifyDataSetChanged();
 
                                     }
@@ -308,20 +290,20 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
     }
 
 
-    private void setListOnClickListenerForOffline (){
+    private void setListOnClickListenerForOffline() {
         this.list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(final AdapterView<?> parent, View view, final int position, long id) {
 
 
                 Voznja voznja = itemsOffline.get(position);
-               final Prijava selectedPrijava = new Prijava();
+                final Prijava selectedPrijava = new Prijava();
                 selectedPrijava.VoznjaId = voznja.getVoznjaId();
-                selectedPrijava.Ime=voznja.getIme();
+                selectedPrijava.Ime = voznja.getIme();
                 selectedPrijava.Prezime = voznja.getPrezime();
 
                 // Start gps task
-                if (GpsTask.getInstance().getAktivnaPrijava(parent.getContext()) == null){
+                if (GpsTask.getInstance().getAktivnaPrijava(parent.getContext()) == null) {
                     // Gps task not active
                     new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
                             .setTitleText("Da li si siguran?")
@@ -346,21 +328,18 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
                                             .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
 
 
-
-                                    GpsTask.getInstance().startGPSTask(selectedPrijava,parent.getContext());
+                                    GpsTask.getInstance().startGPSTask(selectedPrijava, parent.getContext());
                                     mOfflineObjectAdapter.notifyDataSetChanged();
 
                                 }
                             })
                             .show();
 
-                }
-                else
-                {
+                } else {
 
                     // Gps task is active
                     // Check if selected objects in preference
-                    if(GpsTask.getInstance().getAktivnaPrijava(parent.getContext()).VoznjaId.matches(selectedPrijava.VoznjaId)){
+                    if (GpsTask.getInstance().getAktivnaPrijava(parent.getContext()).VoznjaId.matches(selectedPrijava.VoznjaId)) {
 
                         new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
                                 .setTitleText("Da li si siguran?")
@@ -396,9 +375,7 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
                                 })
                                 .show();
 
-                    }
-                    else
-                    {
+                    } else {
                         // Gps task is active
                         new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
                                 .setTitleText("Da li si siguran?")
@@ -424,7 +401,7 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
 
                                         // Start gps task
                                         Prijava prijava = items.get(position);
-                                        GpsTask.getInstance().startGPSTask(prijava,parent.getContext());
+                                        GpsTask.getInstance().startGPSTask(prijava, parent.getContext());
                                         getAllOfflineVoznje();
 
                                     }
@@ -440,8 +417,7 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
     }
 
 
-
-    private void  tryPostData (Prijava prijava){
+    private void tryPostData(Prijava prijava) {
 
         if (NetworkConnectivity.isConnected(getActivity())) {
             // Update status
@@ -453,9 +429,7 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
             // Sync comments
             GpsTask.getInstance().syncComments(getActivity());
             GpsTask.getInstance().syncGpsInfo(getActivity());
-        }
-        else
-        {
+        } else {
             new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
                     .setTitleText("Uhhh! Nemas interneta!")
                     .setContentText("Nema veze. Tvoji podaci ce se cuvati lokano.")
@@ -472,7 +446,7 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
         }
     }
 
-    private void updateVoznje (VoznjaSimple voznja){
+    private void updateVoznje(VoznjaSimple voznja) {
 
         // Set endpoint
         RestAdapter restAdapter = new RestAdapter.Builder()
@@ -493,7 +467,7 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
 
             @Override
             public void failure(RetrofitError error) {
-                Log.d("Update voznje - fail:",error.toString());
+                Log.d("Update voznje - fail:", error.toString());
             }
         };
 
