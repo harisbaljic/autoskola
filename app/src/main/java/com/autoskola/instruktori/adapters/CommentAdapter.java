@@ -62,8 +62,8 @@ public class CommentAdapter  extends BaseAdapter {
         viewHolder.txtCommentDescription.setText(mListComments.get(position).getOpis());
         viewHolder.txtCommentDate.setText(mListComments.get(position).getDatum());
 
-        String firstName =  AppController.getInstance().getKorisnik().getIme();
-        String lastName =  AppController.getInstance().getKorisnik().getPrezime();
+        String firstName =  AppController.getInstance().korisnik.getIme();
+        String lastName =  AppController.getInstance().korisnik.getPrezime();
         String firstAndLastName = "";
         if (firstName!=null)
             firstAndLastName+=firstName;

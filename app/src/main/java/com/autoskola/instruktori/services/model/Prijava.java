@@ -12,13 +12,28 @@ public class Prijava{
     public int KandidatId;
     public  String DatumVoznje;
     public  String VrijemeVoznje;
+    public String VrijemeVoznjeDo;
+    public String Napomena;
     public int Aktivno;
     public String Ime;
     public String Prezime;
     public  int InstruktorId;
 
+    public String getVrijemeVoznjeDo() {
+        return VrijemeVoznjeDo;
+    }
 
+    public void setVrijemeVoznjeDo(String vrijemeVoznjeDo) {
+        VrijemeVoznjeDo = vrijemeVoznjeDo;
+    }
 
+    public String getNapomena() {
+        return Napomena;
+    }
+
+    public void setNapomena(String napomena) {
+        Napomena = napomena;
+    }
 
     public String convertToJson() {
         Gson gson = new Gson();

@@ -66,21 +66,23 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
         Callback<com.autoskola.instruktori.services.model.Prijava> callback = new Callback<com.autoskola.instruktori.services.model.Prijava>() {
             @Override
             public void success(com.autoskola.instruktori.services.model.Prijava prijava, retrofit.client.Response response) {
-                Log.d("GET Instruktor - success:", String.valueOf(prijava.getInstruktorId()));
-                korId = String.valueOf(prijava.getInstruktorId());
+                if(prijava!=null) {
+                    Log.d("GET Instruktor - success:", String.valueOf(prijava.getInstruktorId()));
+                    korId = String.valueOf(prijava.getInstruktorId());
 
-                if (NetworkConnectivity.isConnected(getActivity())) {
-                    GpsTask.getInstance().showMessage("Ima interneta, pokusavam getati voznje");
-                    // Get all aktivne prijave
-                    getAktivnePrijave(korId);
+                    if (NetworkConnectivity.isConnected(getActivity())) {
+                        GpsTask.getInstance().showMessage("Ima interneta, pokusavam getati voznje");
+                        // Get all aktivne prijave
+                        getAktivnePrijave(korId);
 
-                    // ListView item on click listener
-                    setListOnClickListener();
-                } else {
-                    // Offline data
-                    getAllOfflineVoznje();
-                    setListOnClickListenerForOffline();
-                    GpsTask.getInstance().showMessage("Nemas internet");
+                        // ListView item on click listener
+                        setListOnClickListener();
+                    } else {
+                        // Offline data
+                        getAllOfflineVoznje();
+                        setListOnClickListenerForOffline();
+                        GpsTask.getInstance().showMessage("Nemas internet");
+                    }
                 }
             }
 
@@ -98,7 +100,7 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        getInstruktorId(AppController.getInstance().getKorisnik().getKorisnikId() + "");
+        getInstruktorId(AppController.getInstance().korisnik.getKorisnikId() + "");
     }
 
 
@@ -129,7 +131,7 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
     private void refreshAktivnePrijave() {
 
         // Instruktor id
-        String korisnikId = AppController.getInstance().getKorisnik().getKorisnikId();
+        String korisnikId = AppController.getInstance().korisnik.getKorisnikId();
 
         // Get all aktivne prijave
         getAktivnePrijave(korisnikId);

@@ -32,8 +32,6 @@ public class FragmentZavrseneVoznje  extends Fragment{
     private ListView list;
     private List<Prijava> items = new ArrayList<Prijava>();
     private VoznjeAdapter adapter;
-    private String korId = "";
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -61,8 +59,10 @@ public class FragmentZavrseneVoznje  extends Fragment{
         Callback<com.autoskola.instruktori.services.model.Prijava> callback = new Callback<com.autoskola.instruktori.services.model.Prijava>() {
             @Override
             public void success(com.autoskola.instruktori.services.model.Prijava prijava, retrofit.client.Response response) {
-                Log.d("GET Instruktor - success:",String.valueOf(prijava.getInstruktorId()));
-                korId = String.valueOf(prijava.getInstruktorId());
+                 if(prijava!=null) {
+                     // Get zavrsene voznje
+                     getZavrseneVoznje(String.valueOf(prijava.getInstruktorId()));
+                 }
             }
 
             @Override
@@ -79,10 +79,7 @@ public class FragmentZavrseneVoznje  extends Fragment{
     public void onResume() {
         super.onResume();
         // Instruktor id
-        getInstruktorId(AppController.getInstance().getKorisnik().getKorisnikId() + "");
-
-        // Get zavrsene voznje
-        getZavrseneVoznje(korId);
+        getInstruktorId(AppController.getInstance().korisnik.getKorisnikId() + "");
 
         // Set on click listener
         setListener();

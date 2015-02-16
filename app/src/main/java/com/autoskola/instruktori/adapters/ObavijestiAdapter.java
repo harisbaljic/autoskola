@@ -72,16 +72,6 @@ public class ObavijestiAdapter extends BaseAdapter {
         if(obavijestList.get(position).getSadrzaj() != null)
             viewHolder.tekst.setText(obavijestList.get(position).getSadrzaj());
 
-
-//        if (!((Obavijest) getItem(position)).isImageSet()) {
-//
-//            Obavijest O = obavijestList.get((position));
-//            String sp = obavijestList.get(position).getPutanjaSlika();
-//            if(sp != null)
-//                new DownloadImageTask((ImageView)viewHolder.slika).execute("http://projekt001.app.fit.ba"+sp);
-//        }
-
-
         // http://stackoverflow.com/questions/22330772/why-use-android-picasso-library-to-download-images
         Picasso.with(activity).load("http://projekt001.app.fit.ba"+obavijestList.get(position).getPutanjaSlika()).into(viewHolder.slika);
 
@@ -92,28 +82,4 @@ public class ObavijestiAdapter extends BaseAdapter {
         ImageView slika;
         TextView datum,naslov,tekst;
     }
-
-//    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-//        ImageView bmImage;
-//
-//        public DownloadImageTask(ImageView bmImage) {
-//            this.bmImage = bmImage;
-//        }
-//
-//        protected Bitmap doInBackground(String... urls) {
-//            String urldisplay = urls[0];
-//            Bitmap mIcon11 = null;
-//            try {
-//                InputStream in = new java.net.URL(urldisplay).openStream();
-//                mIcon11 = BitmapFactory.decodeStream(in);
-//            } catch (Exception e) {
-//                Log.e("Error", e.getMessage());
-//                e.printStackTrace();
-//            }
-//            return mIcon11;
-//        }
-//
-//        protected void onPostExecute(Bitmap result) {
-//            bmImage.setImageBitmap(result);}
-//    }
 }

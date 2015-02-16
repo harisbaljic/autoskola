@@ -8,20 +8,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.autoskola.instruktori.R;
-import com.autoskola.instruktori.helpers.AppController;
-import com.autoskola.instruktori.helpers.Helper;
-import com.autoskola.instruktori.model.Prijava;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by The Boss on 12.1.2015.
@@ -29,10 +19,10 @@ import java.util.Map;
 public class PrijaveAdapter extends BaseAdapter {
 
     private Activity activity;
-    private List<Prijava> prijaveList;
+    private List<com.autoskola.instruktori.services.model.Prijava> prijaveList;
 
 
-    public PrijaveAdapter(Activity activity, List<Prijava> prijaveList) {
+    public PrijaveAdapter(Activity activity, List<com.autoskola.instruktori.services.model.Prijava> prijaveList) {
         super();
         this.activity = activity;
         this.prijaveList = prijaveList;
@@ -64,7 +54,7 @@ public class PrijaveAdapter extends BaseAdapter {
             viewHolder.vrijeme.setText(vrijemeOdDo);
         }
 
-        if (prijaveList.get(position).getVrijemeVoznjeDo() != null) {
+        if (prijaveList.get(position).getVrijemeVoznje() != null) {
             vrijemeOdDo += " do " + prijaveList.get(position).getVrijemeVoznjeDo().toString();
             viewHolder.vrijeme.append(vrijemeOdDo);
         }
@@ -86,34 +76,34 @@ public class PrijaveAdapter extends BaseAdapter {
             public void onClick(View v) {
                 Log.d("test", "Ušao u on click");
 
-                final StringRequest updatePrijave = new StringRequest(Request.Method.POST, Helper.prijavaUpdate, new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String s) {
+//                final StringRequest updatePrijave = new StringRequest(Request.Method.POST, Helper.prijavaUpdate, new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String s) {
+//
+//                        Toast.makeText(
+//                                activity,
+//                                "Vožnja odobrena",
+//                                Toast.LENGTH_SHORT)
+//                                .show();
+//                    }
+//                }, new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError volleyError) {
+//
+//
+//                    }
+//                }) {
+//                    @Override
+//                    protected Map<String, String> getParams() {
+//                        Map<String, String> params = new HashMap<String, String>();
+//
+//                        params.put("voznjaId", 1 + "");
+//
+//                        return params;
+//                    }
+//                };
 
-                        Toast.makeText(
-                                activity,
-                                "Vožnja odobrena",
-                                Toast.LENGTH_SHORT)
-                                .show();
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError volleyError) {
-
-
-                    }
-                }) {
-                    @Override
-                    protected Map<String, String> getParams() {
-                        Map<String, String> params = new HashMap<String, String>();
-
-                        params.put("voznjaId", 1 + "");
-
-                        return params;
-                    }
-                };
-
-                AppController.getInstance().addToRequestQueue(updatePrijave);
+                //AppController.getInstance().addToRequestQueue(updatePrijave);
             }
 
         });

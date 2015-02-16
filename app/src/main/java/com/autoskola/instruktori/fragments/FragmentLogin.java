@@ -99,7 +99,7 @@ public class FragmentLogin extends Activity {
                                         k.LozinkaHash = sha1(mFragment_login_password
                                                 .getText().toString());
                                         AppController.getInstance()
-                                                .setKorisnik(k);
+                                                .korisnik = k;
 
                                         MemoryManager memoryManager = new MemoryManager(
                                                FragmentLogin.this);
