@@ -115,28 +115,31 @@ public class MapaLive extends Fragment implements GpsResponseHandler,View.OnClic
    }
 
   private void updateMap (final Activity activity){
-      // Check for active prijava
-      if (GpsTask.getInstance().getAktivnaPrijava(activity.getBaseContext())!=null) {
-          new Thread(new Runnable() {
-              public void run() {
 
-                  Realm realm = Realm.getInstance(activity.getBaseContext());
-                  RealmResults<GpsInfo> gpsList = realm.where(GpsInfo.class)
-                          .equalTo("voznjaId", GpsTask.getInstance().getAktivnaPrijava(activity.getBaseContext()).VoznjaId)
-                          .findAll();
+      if(activity!=null){
+          // Check for active prijava
+          if (GpsTask.getInstance().getAktivnaPrijava(activity.getBaseContext())!=null) {
+              new Thread(new Runnable() {
+                  public void run() {
+
+                      Realm realm = Realm.getInstance(activity.getBaseContext());
+                      RealmResults<GpsInfo> gpsList = realm.where(GpsInfo.class)
+                              .equalTo("voznjaId", GpsTask.getInstance().getAktivnaPrijava(activity.getBaseContext()).VoznjaId)
+                              .findAll();
 
 
-                  List<LatLng> locations = new ArrayList<LatLng>();
-                  for(int i=0;i<gpsList.size();i++){
-                      locations.add(new LatLng(Double.valueOf(gpsList.get(i).getLatitude()),Double.valueOf(gpsList.get(i).getLongitude())));
+                      List<LatLng> locations = new ArrayList<LatLng>();
+                      for(int i=0;i<gpsList.size();i++){
+                          locations.add(new LatLng(Double.valueOf(gpsList.get(i).getLatitude()),Double.valueOf(gpsList.get(i).getLongitude())));
+
+                      }
+
+                      MapHelper.getInstance().drawMapRoute(locations,googleMap,activity);
+                      //new LatLng(43.856259,18.413076);
 
                   }
-
-                  MapHelper.getInstance().drawMapRoute(locations,googleMap,activity);
-                  //new LatLng(43.856259,18.413076);
-
-              }
-          }).start();
+              }).start();
+          }
       }
     }
 
