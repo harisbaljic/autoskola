@@ -27,7 +27,7 @@ import retrofit.client.Response;
 /**
  * Created by haris on 1/31/15.
  */
-public class FragmentZavrseneVoznje  extends Fragment{
+public class FragmentZavrseneVoznje extends Fragment {
 
     private ListView list;
     private List<Prijava> items = new ArrayList<Prijava>();
@@ -42,11 +42,11 @@ public class FragmentZavrseneVoznje  extends Fragment{
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        list = (ListView) getActivity().findViewById( R.id.activity_main_list_voznje);
+        list = (ListView) getActivity().findViewById(R.id.activity_main_list_voznje);
 
     }
 
-    public void getInstruktorId(String korisnikId){
+    public void getInstruktorId(String korisnikId) {
         // Set endpoint
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint("http://projekt001.app.fit.ba/autoskola")
@@ -59,20 +59,20 @@ public class FragmentZavrseneVoznje  extends Fragment{
         Callback<com.autoskola.instruktori.services.model.Prijava> callback = new Callback<com.autoskola.instruktori.services.model.Prijava>() {
             @Override
             public void success(com.autoskola.instruktori.services.model.Prijava prijava, retrofit.client.Response response) {
-                 if(prijava!=null) {
-                     // Get zavrsene voznje
-                     getZavrseneVoznje(String.valueOf(prijava.getInstruktorId()));
-                 }
+                if (prijava != null) {
+                    // Get zavrsene voznje
+                    getZavrseneVoznje(String.valueOf(prijava.getInstruktorId()));
+                }
             }
 
             @Override
             public void failure(RetrofitError error) {
-                Log.d("GPS Instruktor - fail:",error.toString());
+                Log.d("GPS Instruktor - fail:", error.toString());
             }
         };
 
         // GET request
-        service.getInstruktorId(korisnikId,callback);
+        service.getInstruktorId(korisnikId, callback);
     }
 
     @Override
@@ -85,7 +85,7 @@ public class FragmentZavrseneVoznje  extends Fragment{
         setListener();
     }
 
-    private void setListener (){
+    private void setListener() {
 
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -110,7 +110,7 @@ public class FragmentZavrseneVoznje  extends Fragment{
     }
 
 
-    public void getZavrseneVoznje(String instruktorId){
+    public void getZavrseneVoznje(String instruktorId) {
         // Set endpoint
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint("http://projekt001.app.fit.ba/autoskola")
@@ -132,11 +132,11 @@ public class FragmentZavrseneVoznje  extends Fragment{
 
             @Override
             public void failure(RetrofitError error) {
-                Log.d("GET Aktivne prijave - fail:",error.toString());
+                Log.d("GET Aktivne prijave - fail:", error.toString());
             }
         };
 
         // GET request
-        service.getZavrseneVoznje(instruktorId,callback);
+        service.getZavrseneVoznje(instruktorId, callback);
     }
 }

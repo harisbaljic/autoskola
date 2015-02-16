@@ -38,4 +38,6 @@ public interface PrijavaWebService {
     @GET("/servis_SelectInstruktorId.php")
     void getInstruktorId(@Query("korisnikId") String instruktorId, Callback<Prijava> cb);
 
+    @POST("/servis_PrijaveUpdate.php")
+    void updatePrijave (@Body Prijava info,Callback<Prijava> cb);
 }

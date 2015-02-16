@@ -77,7 +77,7 @@
         android:background="@color/actionbar_10" >
 
         <Button
-            android:id="@+id/list_item_prijava_inflater_btn_odobri"
+            android:id="@+id/btnOdobriPrijavu"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-condensed"
@@ -91,7 +91,7 @@
             />
 
         <Button
-            android:id="@+id/list_item_prijava_inflater_btn_ponisti"
+            android:id="@+id/btnPonistiPrijavu"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"

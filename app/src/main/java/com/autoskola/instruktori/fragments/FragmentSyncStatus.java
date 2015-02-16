@@ -40,17 +40,11 @@ public class FragmentSyncStatus extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         list = (ListView) getActivity().findViewById(R.id.activity_main_list_voznje);
-//        mHandler = new Handler();
-       // mProgressDialog = new ProgressDialog(getActivity());
-      //  startRepeatingTask();
-
-
         getAllOfflineVoznje();
-
     }
 
-    private void showProgress  () {
-        if (mProgressDialog!=null)
+    private void showProgress() {
+        if (mProgressDialog != null)
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -60,8 +54,8 @@ public class FragmentSyncStatus extends Fragment {
 
     }
 
-    private void hideProgress (){
-        if (mProgressDialog!=null)
+    private void hideProgress() {
+        if (mProgressDialog != null)
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -71,30 +65,25 @@ public class FragmentSyncStatus extends Fragment {
 
     }
 
-    private  void getAllOfflineVoznje () {
+    private void getAllOfflineVoznje() {
         new Thread(new Runnable() {
             public void run() {
 
                 Realm realm = Realm.getInstance(getActivity());
                 final RealmResults<Voznja> voznjaList = realm.where(Voznja.class)
-                        .notEqualTo("voznjaId","")
+                        .notEqualTo("voznjaId", "")
                         .findAll();
 
-                adapter = new SyncStatusAdapter(getActivity(),voznjaList);
+                adapter = new SyncStatusAdapter(getActivity(), voznjaList);
 
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            list.setAdapter(adapter);
-                            adapter.notifyDataSetChanged();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        list.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
 
-                        }
-                    });
-
-
-
-
-
+                    }
+                });
 
             }
         }).start();

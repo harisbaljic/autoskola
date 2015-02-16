@@ -10,8 +10,15 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.autoskola.instruktori.R;
+import com.autoskola.instruktori.fragments.FragmentPrijave;
+import com.autoskola.instruktori.services.PrijavaWebService;
+import com.autoskola.instruktori.services.model.Prijava;
 
 import java.util.List;
+
+import retrofit.Callback;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
 
 /**
  * Created by The Boss on 12.1.2015.
@@ -20,12 +27,13 @@ public class PrijaveAdapter extends BaseAdapter {
 
     private Activity activity;
     private List<com.autoskola.instruktori.services.model.Prijava> prijaveList;
+    private FragmentPrijave fragmentPrijave;
 
-
-    public PrijaveAdapter(Activity activity, List<com.autoskola.instruktori.services.model.Prijava> prijaveList) {
+    public PrijaveAdapter(Activity activity, List<com.autoskola.instruktori.services.model.Prijava> prijaveList,FragmentPrijave fragment) {
         super();
         this.activity = activity;
         this.prijaveList = prijaveList;
+        this.fragmentPrijave=fragment;
     }
 
     @Override
@@ -39,6 +47,8 @@ public class PrijaveAdapter extends BaseAdapter {
             viewHolder.kandidat = (TextView) convertView.findViewById(R.id.list_item_prijava_inflater_kandidat);
             viewHolder.vrijeme = (TextView) convertView.findViewById(R.id.list_item_prijava_inflater_status);
             viewHolder.napomena = (TextView) convertView.findViewById(R.id.list_item_prijava_inflater_napomena);
+            viewHolder.btnOdobri = (Button) convertView.findViewById(R.id.btnOdobriPrijavu);
+            viewHolder.btnPonisti = (Button) convertView.findViewById(R.id.btnPonistiPrijavu);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -68,47 +78,28 @@ public class PrijaveAdapter extends BaseAdapter {
             viewHolder.kandidat.setText(prijaveList.get(position).getIme() + " " + prijaveList.get(position).getPrezime());
         }
 
-
-        final Button btnOdobri = (Button) convertView.findViewById(R.id.list_item_prijava_inflater_btn_odobri);
-
-        btnOdobri.setOnClickListener(new View.OnClickListener() {
+        viewHolder.btnOdobri.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("test", "Ušao u on click");
-
-//                final StringRequest updatePrijave = new StringRequest(Request.Method.POST, Helper.prijavaUpdate, new Response.Listener<String>() {
-//                    @Override
-//                    public void onResponse(String s) {
-//
-//                        Toast.makeText(
-//                                activity,
-//                                "Vožnja odobrena",
-//                                Toast.LENGTH_SHORT)
-//                                .show();
-//                    }
-//                }, new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError volleyError) {
-//
-//
-//                    }
-//                }) {
-//                    @Override
-//                    protected Map<String, String> getParams() {
-//                        Map<String, String> params = new HashMap<String, String>();
-//
-//                        params.put("voznjaId", 1 + "");
-//
-//                        return params;
-//                    }
-//                };
-
-                //AppController.getInstance().addToRequestQueue(updatePrijave);
+                System.out.println("Odobri");
+                //kada klikne odobri da se uradi update da se postavi na aktivno i da se postavi atribut naCekanju da je 0
+                Prijava selected = prijaveList.get(position);
+                selected.setAktivno(1);
+                updatePrijave(selected);
             }
-
         });
 
+        viewHolder.btnPonisti.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("Ponisti");
+                // a kad poništiš atribut aktivno postaviti na 0, a atribut naCekanju na 0
+                Prijava selected = prijaveList.get(position);
+                selected.setAktivno(0);
+                updatePrijave(selected);
 
+            }
+        });
         return convertView;
     }
 
@@ -131,8 +122,33 @@ public class PrijaveAdapter extends BaseAdapter {
 
     private class ViewHolder {
         TextView datum, kandidat, vrijeme, napomena;
-        Button odobri;
+        Button btnOdobri, btnPonisti;
     }
 
+    private void updatePrijave(Prijava prijava) {
+        // Set endpoint
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setEndpoint("http://projekt001.app.fit.ba/autoskola")
+                .build();
 
+        // Generate service
+        PrijavaWebService service = restAdapter.create(PrijavaWebService.class);
+
+        // Callback
+        Callback<Prijava> callback = new Callback<com.autoskola.instruktori.services.model.Prijava>() {
+            @Override
+            public void success(com.autoskola.instruktori.services.model.Prijava prijava, retrofit.client.Response response) {
+                Log.d("Update prijave - success:", "");
+                 fragmentPrijave.getInstruktor();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.d("Update prijave - fail:", error.toString());
+            }
+        };
+
+        // GET request
+        service.updatePrijave(prijava, callback);
+    }
 }

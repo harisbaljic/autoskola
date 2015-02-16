@@ -28,7 +28,6 @@ public class MapHelper {
     public static final LatLng SARAJEVO = new LatLng(43.856259,18.413076);
     public static final LatLng MOSTAR = new LatLng(43.342273,17.812754);
 
-
     public static MapHelper getInstance() {
         return ourInstance;
     }
@@ -76,10 +75,7 @@ public class MapHelper {
 
                             // Set map to location
                             setMapToLocation(routes.get(0).latitude,routes.get(0).longitude,googleMap);
-
-
                         }
-
 
                         // Add lines on map
                         googleMap.addPolyline(new PolylineOptions()

@@ -55,7 +55,7 @@ public class FragmentPrijave extends android.support.v4.app.Fragment {
                     Log.d("GET Instruktor - success:", String.valueOf(prijava.getInstruktorId()));
 
                 // Get prijave
-                //getPrijave(String.valueOf(prijava.getInstruktorId()));
+                getPrijave(String.valueOf(prijava.getInstruktorId()));
             }
 
             @Override
@@ -83,7 +83,7 @@ public class FragmentPrijave extends android.support.v4.app.Fragment {
             @Override
             public void success(List<com.autoskola.instruktori.services.model.Prijava> prijavas, retrofit.client.Response response) {
                 items = new ArrayList<>(prijavas);
-                adapter = new PrijaveAdapter(getActivity(), items);
+                adapter = new PrijaveAdapter(getActivity(), items,FragmentPrijave.this);
                 list.setAdapter(adapter);
             }
 
@@ -98,11 +98,14 @@ public class FragmentPrijave extends android.support.v4.app.Fragment {
 
     }
 
+    public void getInstruktor (){
+        getInstruktorId(AppController.getInstance().korisnik.getKorisnikId() + "");
+    }
+
     @Override
     public void onResume() {
         super.onResume();
-        System.out.println("Korisnik id : "+AppController.getInstance().korisnik.getKorisnikId());
-        getInstruktorId(AppController.getInstance().korisnik.getKorisnikId() + "");
+       getInstruktor();
     }
 }
 

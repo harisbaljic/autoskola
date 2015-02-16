@@ -133,6 +133,11 @@ public class MainActivity2 extends FragmentActivity  implements GpsResponseHandl
 
         // Set first fragment
         setFragment(0);
+
+        // Sync data
+        GpsTask.getInstance().syncVoznjeStatus(this);
+        GpsTask.getInstance().syncComments(this);
+        GpsTask.getInstance().syncGpsInfo(this);
     }
 
     @Override
@@ -236,13 +241,5 @@ public class MainActivity2 extends FragmentActivity  implements GpsResponseHandl
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu_main_activity2, menu);
         return true;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        GpsTask.getInstance().syncVoznjeStatus(this);
-        GpsTask.getInstance().syncComments(this);
-        GpsTask.getInstance().syncGpsInfo(this);
     }
 }
