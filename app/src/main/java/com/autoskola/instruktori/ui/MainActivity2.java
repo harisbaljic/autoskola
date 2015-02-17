@@ -226,7 +226,7 @@ public class MainActivity2 extends FragmentActivity  implements GpsResponseHandl
     @Override
     public void onGpsResponse(GpsResponseTypes responseType) {
         GpsTask.getInstance().showMessage("Type:"+responseType);
-        if (responseType == GpsResponseTypes.WI_FI_CONNECTION){
+        if (responseType == GpsResponseTypes.WI_FI_CONNECTION || responseType == GpsResponseTypes.MOBILE_CONNECTION ){
             GpsTask.getInstance().syncVoznjeStatus(this);
             GpsTask.getInstance().syncComments(this);
             GpsTask.getInstance().syncGpsInfo(this);
