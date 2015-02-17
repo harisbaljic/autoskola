@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.location.Location;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -33,6 +34,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -84,8 +86,6 @@ public class MapaLive extends Fragment implements GpsResponseHandler,View.OnClic
     private void initilizeMap() {
         if (googleMap == null) {
             googleMap = ((MapFragment)getActivity().getFragmentManager().findFragmentById(R.id.map)).getMap();
-
-            googleMap.setMyLocationEnabled(true);
             googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
                 @Override
                 public void onMapLongClick(LatLng latLng) {
@@ -100,8 +100,6 @@ public class MapaLive extends Fragment implements GpsResponseHandler,View.OnClic
                         .show();
             }
         }
-
-     MapHelper.getInstance().setMapToLocation(MapHelper.getInstance().SARAJEVO,googleMap);
     }
 
     @Override
@@ -135,7 +133,6 @@ public class MapaLive extends Fragment implements GpsResponseHandler,View.OnClic
                       }
 
                       MapHelper.getInstance().drawMapRoute(locations,googleMap,activity);
-                      //new LatLng(43.856259,18.413076);
 
                   }
               }).start();
@@ -182,15 +179,22 @@ public class MapaLive extends Fragment implements GpsResponseHandler,View.OnClic
                                 komentar.setLng(String.valueOf(location.getLongitude()));
                             }else
                             {
-                                komentar.setLtd("");
-                                komentar.setLng("");
+                                komentar.setLtd("0");
+                                komentar.setLng("0");
                             }
                         }
 
                         addNewComment(komentar);
                     }
-                    else
-                        GpsTask.getInstance().showMessage("Ne mozes dodati komentar jer nema aktivne voznje...");
+                    else {
+                        SweetAlertDialog alert = new SweetAlertDialog(getActivity()).setConfirmText("OK").setTitleText("Info").setContentText("Ne mozes dodati komentar jer nema aktivne voznje.").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismiss();
+                            }
+                        });
+                        alert.show();
+                    }
 
                 }
             });
@@ -214,8 +218,12 @@ public class MapaLive extends Fragment implements GpsResponseHandler,View.OnClic
         // Save to local db
         GpsTask.getInstance().saveCommentOffline(getActivity(), comment);
 
+        // Play sound
+        playSoundForNewComment();
+
         // Draw comment on map
         MapHelper.getInstance().drawCommentOnMap(comment, googleMap, this.getActivity());
+
     }
 
     @Override
@@ -231,6 +239,16 @@ public class MapaLive extends Fragment implements GpsResponseHandler,View.OnClic
         if (GpsTask.getInstance().getAktivnaPrijava(getActivity().getBaseContext())!=null) {
             GpsTask.getInstance().showAllOfflineComments(GpsTask.getInstance().getAktivnaPrijava(getActivity().getBaseContext()).VoznjaId,getActivity(),googleMap);
         }
+        else
+        {
+           MapHelper.getInstance().setMapToLocation(MapHelper.MOSTAR,googleMap);
+        }
+    }
+
+
+    private void playSoundForNewComment () {
+        MediaPlayer mp = MediaPlayer.create(getActivity(),R.raw.blop);
+        mp.start();
     }
 }
 

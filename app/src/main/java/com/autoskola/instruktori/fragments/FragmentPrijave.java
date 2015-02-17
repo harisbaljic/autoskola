@@ -99,7 +99,7 @@ public class FragmentPrijave extends android.support.v4.app.Fragment {
     }
 
     public void getInstruktor (){
-        getInstruktorId(AppController.getInstance().korisnik.getKorisnikId() + "");
+        getInstruktorId(AppController.getInstance().getLogiraniKorisnik().getKorisnikId() + "");
     }
 
     @Override

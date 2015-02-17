@@ -8,7 +8,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.autoskola.instruktori.helpers.NetworkConnectivity;
 import com.autoskola.instruktori.map.MapHelper;
@@ -124,7 +123,7 @@ public class GpsTask {
         @Override
         public void onLocationChanged(Location locFromGps) {
             // called when the listener is notified with a location update from the GPS
-            showMessage("Lat:" + locFromGps.getLatitude() + "Lng:" + locFromGps.getLongitude());
+           // showMessage("Lat:" + locFromGps.getLatitude() + "Lng:" + locFromGps.getLongitude());
             if (getAktivnaPrijava(context) != null) {
 
                 GpsInfo info = new GpsInfo();
@@ -149,26 +148,26 @@ public class GpsTask {
                 if (communicatorInterfaceMap != null) {
                     communicatorInterfaceMap.onGpsResponse(GpsResponseTypes.GPS_LOCATION_CHANGED);
                 }
-            } else
-                showMessage("Lokacija je promjenjena, ali nema aktivnih prijava");
+            } //else
+                //showMessage("Lokacija je promjenjena, ali nema aktivnih prijava");
         }
 
         @Override
         public void onProviderDisabled(String provider) {
             // called when the GPS provider is turned off (user turning off the GPS on the phone)
-            showMessage("GPS Provider is turned off");
+            //showMessage("GPS Provider is turned off");
         }
 
         @Override
         public void onProviderEnabled(String provider) {
             // called when the GPS provider is turned on (user turning on the GPS on the phone)
-            showMessage("GPS Provider is turned on");
+            //showMessage("GPS Provider is turned on");
         }
 
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
             // called when the status of the GPS provider changes
-            showMessage("GPS status changed:" + status);
+            //showMessage("GPS status changed:" + status);
         }
     }
 
@@ -181,9 +180,9 @@ public class GpsTask {
         return location;
     }
 
-    public void showMessage(String message) {
-        Toast.makeText((Context) this.communicatorInterface, message, Toast.LENGTH_SHORT).show();
-    }
+//    public void showMessage(String message) {
+//        Toast.makeText((Context) this.communicatorInterface, message, Toast.LENGTH_SHORT).show();
+//    }
 
     // Save aktivna prijava to preference
     public void startGPSTask(Prijava prijava, Context context) {
@@ -243,7 +242,7 @@ public class GpsTask {
                 }
                 realm.commitTransaction();
 
-                GpsTask.getInstance().showMessage("Comment synced successfuly");
+                //GpsTask.getInstance().showMessage("Comment synced successfuly");
             }
 
             @Override
@@ -376,6 +375,8 @@ public class GpsTask {
 
     // Sync local db to server
     public void syncGpsInfo(final Context context) {
+
+
 
         new Thread(new Runnable() {
             public void run() {

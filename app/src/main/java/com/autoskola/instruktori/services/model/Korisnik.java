@@ -1,5 +1,7 @@
 package com.autoskola.instruktori.services.model;
 
+import com.google.gson.Gson;
+
 /**
  * Created by The Boss on 4.1.2015.
  */
@@ -82,5 +84,12 @@ public class Korisnik {
 
     public void setKorisnikId(String korisnikId) {
         KorisnikId = korisnikId;
+    }
+
+
+    public String convertToJson() {
+        Gson gson = new Gson();
+        String json = gson.toJson(this);
+        return json;
     }
 }

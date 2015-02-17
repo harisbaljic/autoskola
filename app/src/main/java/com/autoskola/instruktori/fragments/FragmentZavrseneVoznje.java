@@ -79,7 +79,7 @@ public class FragmentZavrseneVoznje extends Fragment {
     public void onResume() {
         super.onResume();
         // Instruktor id
-        getInstruktorId(AppController.getInstance().korisnik.getKorisnikId() + "");
+        getInstruktorId(AppController.getInstance().getLogiraniKorisnik().getKorisnikId() + "");
 
         // Set on click listener
         setListener();

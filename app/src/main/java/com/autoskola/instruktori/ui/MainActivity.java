@@ -1,6 +1,9 @@
 package com.autoskola.instruktori.ui;
 
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -21,6 +24,7 @@ import com.autoskola.instruktori.MapaLive;
 import com.autoskola.instruktori.R;
 import com.autoskola.instruktori.adapters.MenuDrawerAdapter;
 import com.autoskola.instruktori.fragments.FragmentDodajVoznju;
+import com.autoskola.instruktori.fragments.FragmentLogin;
 import com.autoskola.instruktori.fragments.FragmentObavijesti;
 import com.autoskola.instruktori.fragments.FragmentPrijave;
 import com.autoskola.instruktori.fragments.FragmentSettings;
@@ -33,8 +37,10 @@ import com.autoskola.instruktori.helpers.NetworkConnectivity;
 
 import java.util.Arrays;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
-public class MainActivity2 extends FragmentActivity  implements GpsResponseHandler {
+
+public class MainActivity extends FragmentActivity  implements GpsResponseHandler {
 
     String[] mDrawerTitles = {
             "Vijesti",
@@ -170,11 +176,33 @@ public class MainActivity2 extends FragmentActivity  implements GpsResponseHandl
             }
             else
             {
-                GpsTask.getInstance().showMessage("No internet connection");
+                SweetAlertDialog alertDialog = new SweetAlertDialog(this).setConfirmText("OK").setTitleText("Info").setContentText("Nemas interneta.").setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+                    }
+                });
+                alertDialog.show();
             }
-        }
+        }else if (item.getItemId() == R.id.action_logout){
 
+            // Close main acvity
+            finish();
+
+            // Remove user from shared prefs
+            logOut();
+
+            // Open Login activity
+            Intent intent = new Intent(this, FragmentLogin.class);
+            startActivity(intent);
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void logOut() {
+        SharedPreferences.Editor editor = getSharedPreferences("AppSharedPereferences", Context.MODE_PRIVATE).edit();
+        editor.putString("korisnik",null);
+        editor.commit();
     }
 
     private void setFragment(int position){
@@ -225,15 +253,12 @@ public class MainActivity2 extends FragmentActivity  implements GpsResponseHandl
     }
     @Override
     public void onGpsResponse(GpsResponseTypes responseType) {
-        GpsTask.getInstance().showMessage("Type:"+responseType);
         if (responseType == GpsResponseTypes.WI_FI_CONNECTION || responseType == GpsResponseTypes.MOBILE_CONNECTION ){
             GpsTask.getInstance().syncVoznjeStatus(this);
             GpsTask.getInstance().syncComments(this);
             GpsTask.getInstance().syncGpsInfo(this);
         }
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)

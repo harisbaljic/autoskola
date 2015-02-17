@@ -71,7 +71,6 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
                     korId = String.valueOf(prijava.getInstruktorId());
 
                     if (NetworkConnectivity.isConnected(getActivity())) {
-                        GpsTask.getInstance().showMessage("Ima interneta, pokusavam getati voznje");
                         // Get all aktivne prijave
                         getAktivnePrijave(korId);
 
@@ -81,7 +80,6 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
                         // Offline data
                         getAllOfflineVoznje();
                         setListOnClickListenerForOffline();
-                        GpsTask.getInstance().showMessage("Nemas internet");
                     }
                 }
             }
@@ -100,7 +98,7 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        getInstruktorId(AppController.getInstance().korisnik.getKorisnikId() + "");
+        getInstruktorId(AppController.getInstance().getLogiraniKorisnik().getKorisnikId() + "");
     }
 
 
@@ -131,7 +129,7 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
     private void refreshAktivnePrijave() {
 
         // Instruktor id
-        String korisnikId = AppController.getInstance().korisnik.getKorisnikId();
+        String korisnikId = AppController.getInstance().getLogiraniKorisnik().getKorisnikId();
 
         // Get all aktivne prijave
         getAktivnePrijave(korisnikId);
@@ -156,7 +154,6 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
                 adapter = new VoznjeAdapter(getActivity(), items);
                 list.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
-                GpsTask.getInstance().showMessage("Vraceno je :" + prijave.size() + " voznji");
             }
 
             @Override

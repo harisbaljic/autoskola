@@ -1,5 +1,6 @@
 package com.autoskola.instruktori.services;
 
+import com.autoskola.instruktori.services.model.Korisnik;
 import com.autoskola.instruktori.services.model.Obavijest;
 import com.autoskola.instruktori.services.model.Prijava;
 import com.autoskola.instruktori.services.model.VoznjaSimple;
@@ -8,6 +9,8 @@ import java.util.List;
 
 import retrofit.Callback;
 import retrofit.http.Body;
+import retrofit.http.Field;
+import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
 import retrofit.http.POST;
 import retrofit.http.Query;
@@ -40,4 +43,8 @@ public interface PrijavaWebService {
 
     @POST("/servis_PrijaveUpdate.php")
     void updatePrijave (@Body Prijava info,Callback<Prijava> cb);
+
+    @FormUrlEncoded
+    @POST("/servis_Login.php")
+    void login(@Field("korIme") String korIme, @Field("hash") String hash,Callback<Korisnik>cb);
 }
