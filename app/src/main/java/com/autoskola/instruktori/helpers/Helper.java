@@ -10,7 +10,6 @@ import java.util.Date;
  */
 public class Helper {
 
-    public static String login = "http://projekt001.app.fit.ba/autoskola/servis_Login.php";
     public static String parseDateForObavijesti(String dbFormat) {
         Date temp;
         try {

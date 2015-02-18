@@ -375,9 +375,6 @@ public class GpsTask {
 
     // Sync local db to server
     public void syncGpsInfo(final Context context) {
-
-
-
         new Thread(new Runnable() {
             public void run() {
                 Realm realm = Realm.getInstance(context);

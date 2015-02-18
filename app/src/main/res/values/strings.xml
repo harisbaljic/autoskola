@@ -9,8 +9,6 @@
     <string name="title_activity_fragment_mapa">Map</string>
     <string name="title_activity_main_activity2">Vijesti</string>
     <string name="title_activity_login">Login</string>
-
-
     <string name="drawer_title_open">Choose item</string>
     <string name="drawer_title_closed"></string>
 
