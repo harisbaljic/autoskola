@@ -59,7 +59,7 @@ public class MapHelper {
 
     public void drawMapRoute (final List<LatLng> routes,final GoogleMap googleMap, Activity context){
 
-        if (googleMap != null) {
+        if (googleMap != null && context!=null) {
             context.runOnUiThread(new Runnable() {
                     @Override
 
