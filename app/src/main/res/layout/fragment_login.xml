@@ -41,7 +41,7 @@
             android:hint="Korisničko ime"
             android:singleLine="true"
             android:textColor="#696969"
-            android:text="t"
+            android:text="a"
 
             />
 
@@ -55,7 +55,7 @@
             android:password="true"
             android:singleLine="true"
             android:textColor="#696969"
-            android:text="t"
+            android:text="a"
 
             />
     </RelativeLayout>

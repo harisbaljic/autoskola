@@ -7,6 +7,16 @@ import com.google.gson.Gson;
  */
 public class Prijava{
 
+    //    {
+//        "VoznjaId": 106,
+//            "PrijavaId": 2,
+//            "VrijemeVoznje": "08:00h",
+//            "DatumVoznje": "2015-02-21 00:00:00:000",
+//            "Aktivno": 1,
+//            "Ime": "Haris",
+//            "Prezime": "Baljic",
+//            "InstruktorId": 2
+//    }
     public String VoznjaId;
     public String DatumPrijave;
     public int KandidatId;
@@ -18,6 +28,8 @@ public class Prijava{
     public String Ime;
     public String Prezime;
     public  int InstruktorId;
+    public String PrijavaId;
+
 
     public String getVrijemeVoznjeDo() {
         return VrijemeVoznjeDo;
@@ -117,5 +129,13 @@ public class Prijava{
 
     public void setInstruktorId(int instruktorId) {
         InstruktorId = instruktorId;
+    }
+
+    public String getPrijavaId() {
+        return PrijavaId;
+    }
+
+    public void setPrijavaId(String prijavaId) {
+        PrijavaId = prijavaId;
     }
 }

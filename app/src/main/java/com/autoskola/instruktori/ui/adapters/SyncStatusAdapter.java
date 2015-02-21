@@ -37,7 +37,7 @@ public class SyncStatusAdapter extends BaseAdapter {
             viewHolder = new ViewHolder();
             viewHolder.txtDate = (TextView) convertView.findViewById(R.id.txtDate);
             viewHolder.txtName = (TextView) convertView.findViewById(R.id.txtFirstLastName);
-            viewHolder.txtStatus = (TextView) convertView.findViewById(R.id.txtStatus);
+
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
