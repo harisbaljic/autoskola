@@ -1,16 +1,15 @@
 package com.autoskola.instruktori.ui.fragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.autoskola.instruktori.R;
-import com.autoskola.instruktori.ui.adapters.PrijaveAdapter;
 import com.autoskola.instruktori.helpers.ApplicationContext;
 import com.autoskola.instruktori.services.PrijavaWebService;
+import com.autoskola.instruktori.ui.adapters.PrijaveAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,38 +36,7 @@ public class FragmentPrijave extends android.support.v4.app.Fragment {
 
     }
 
-    public void getInstruktorId(String korisnikId) {
-        // Set endpoint
-        RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint("http://projekt001.app.fit.ba/autoskola")
-                .build();
-
-        // Generate service
-        PrijavaWebService service = restAdapter.create(PrijavaWebService.class);
-
-        // Callback
-        Callback<com.autoskola.instruktori.services.model.Prijava> callback = new Callback<com.autoskola.instruktori.services.model.Prijava>() {
-            @Override
-            public void success(com.autoskola.instruktori.services.model.Prijava prijava, retrofit.client.Response response) {
-               //
-                if(prijava!=null)
-                    Log.d("GET Instruktor - success:", String.valueOf(prijava.getInstruktorId()));
-
-                // Get prijave
-                getPrijave(String.valueOf(prijava.getInstruktorId()));
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                Log.d("GET Instruktor - fail:", error.toString());
-            }
-        };
-
-        // GET request
-        service.getInstruktorId(korisnikId, callback);
-    }
-
-    private void getPrijave(String korisnikId) {
+    private void getPrijave(String instruktorId) {
 
         // Set endpoint
         RestAdapter restAdapter = new RestAdapter.Builder()
@@ -94,18 +62,19 @@ public class FragmentPrijave extends android.support.v4.app.Fragment {
         };
 
         // GET request
-        service.getSvePrijave(korisnikId,callback);
+        service.getSvePrijave(instruktorId,callback);
 
     }
 
-    public void getInstruktor (){
-        getInstruktorId(ApplicationContext.getInstance().getLogiraniKorisnik().getKorisnikId() + "");
+
+    public void getPrijave(){
+        getPrijave(ApplicationContext.getInstance().getLogiraniKorisnik().InstruktorId);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-       getInstruktor();
+         getPrijave();
     }
 }
 

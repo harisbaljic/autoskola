@@ -9,6 +9,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.autoskola.instruktori.helpers.GlobalConfig;
 import com.autoskola.instruktori.helpers.NetworkConnectivity;
 import com.autoskola.instruktori.map.MapHelper;
 import com.autoskola.instruktori.services.GpsWebService;
@@ -38,9 +39,7 @@ import retrofit.client.Response;
 public class GpsTask {
     private static GpsTask ourInstance = new GpsTask();
 
-    // Location update config
-    private static String DEFAULT_LOCATION_UPDATE_MIN_INTERVAL = "35000"; // In millisecond
-    private static String DEFAULT_LOCATION_UPDATE_MIN_DISTANCE = "10"; // In meters
+
 
     // Location manager
     private LocationManager mLocationManager;
@@ -539,14 +538,13 @@ public class GpsTask {
 
     public String getMinimumIntervalBetweenLocationUpdate(Context context) {
         SharedPreferences prefs = context.getSharedPreferences("AppSharedPereferences", Context.MODE_PRIVATE);
-        String minInterval = prefs.getString("minInterval", DEFAULT_LOCATION_UPDATE_MIN_INTERVAL);
+        String minInterval = prefs.getString("minInterval", GlobalConfig.DEFAULT_LOCATION_UPDATE_MIN_INTERVAL);
         return minInterval;
     }
 
     public String getMinimumDistanceBetweenLocationUpdate(Context context) {
         SharedPreferences prefs = context.getSharedPreferences("AppSharedPereferences", Context.MODE_PRIVATE);
-        String minDisntace = prefs.getString("minDistance", DEFAULT_LOCATION_UPDATE_MIN_DISTANCE);
+        String minDisntace = prefs.getString("minDistance", GlobalConfig.DEFAULT_LOCATION_UPDATE_MIN_DISTANCE);
         return minDisntace;
     }
-
 }

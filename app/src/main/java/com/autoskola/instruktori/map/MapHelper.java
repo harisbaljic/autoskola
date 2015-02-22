@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Color;
 
 import com.autoskola.instruktori.R;
+import com.autoskola.instruktori.helpers.GlobalConfig;
 import com.autoskola.instruktori.services.model.Komentar;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -42,7 +43,7 @@ public class MapHelper {
         map.moveCamera(CameraUpdateFactory.newLatLng(location));
 
         // Zoom in the Google Map
-        map.animateCamera(CameraUpdateFactory.zoomTo(10));
+        map.animateCamera(CameraUpdateFactory.zoomTo(GlobalConfig.DEFAULT_MAP_ZOOM));
     }
 
     public void setMapToLocation(double lat , double lng,GoogleMap map){
@@ -53,7 +54,7 @@ public class MapHelper {
         map.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 
         // Zoom in the Google Map
-        map.animateCamera(CameraUpdateFactory.zoomTo(10));
+        map.animateCamera(CameraUpdateFactory.zoomTo(GlobalConfig.DEFAULT_MAP_ZOOM));
 
     }
 

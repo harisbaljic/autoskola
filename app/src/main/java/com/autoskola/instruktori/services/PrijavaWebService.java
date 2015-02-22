@@ -38,12 +38,10 @@ public interface PrijavaWebService {
     @GET("/servis_ObavijestiTop10.php")
     void getObavijesti(Callback<List<Obavijest>> cb);
 
-    @GET("/servis_SelectInstruktorId.php")
-    void getInstruktorId(@Query("korisnikId") String instruktorId, Callback<Prijava> cb);
-
     @POST("/servis_PrijaveUpdate.php")
     void updatePrijave (@Body Prijava info,Callback<Prijava> cb);
 
+    //http://projekt001.app.fit.ba/autoskola/servis_Login.php?korIme=a&hash=a
     @FormUrlEncoded
     @POST("/servis_Login.php")
     void login(@Field("korIme") String korIme, @Field("hash") String hash,Callback<Korisnik>cb);

@@ -41,7 +41,6 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
 
     private VoznjeAdapter adapter;
     private SyncStatusAdapter mOfflineObjectAdapter;
-    private String korId = "";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,52 +52,21 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
         return view;
     }
 
-    public void getInstruktorId(String korisnikId) {
-        // Set endpoint
-        RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint("http://projekt001.app.fit.ba/autoskola")
-                .build();
-
-        // Generate service
-        PrijavaWebService service = restAdapter.create(PrijavaWebService.class);
-
-        // Callback
-        Callback<com.autoskola.instruktori.services.model.Prijava> callback = new Callback<com.autoskola.instruktori.services.model.Prijava>() {
-            @Override
-            public void success(com.autoskola.instruktori.services.model.Prijava prijava, retrofit.client.Response response) {
-                if(prijava!=null) {
-                    Log.d("GET Instruktor - success:", String.valueOf(prijava.getInstruktorId()));
-                    korId = String.valueOf(prijava.getInstruktorId());
-
-                    if (NetworkConnectivity.isConnected(getActivity())) {
-                        // Get all aktivne prijave
-                        getAktivnePrijave(korId);
-
-                        // ListView item on click listener
-                        setListOnClickListener();
-                    } else {
-                        // Offline data
-                        getAllOfflineVoznje();
-                        setListOnClickListenerForOffline();
-                    }
-                }
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                Log.d("GPS Instruktor - fail:", error.toString());
-            }
-        };
-
-        // GET request
-        service.getInstruktorId(korisnikId, callback);
-    }
-
-
     @Override
     public void onResume() {
         super.onResume();
-        getInstruktorId(ApplicationContext.getInstance().getLogiraniKorisnik().getKorisnikId() + "");
+
+        if (NetworkConnectivity.isConnected(getActivity())) {
+            // Get all aktivne prijave
+            getAktivnePrijave(ApplicationContext.getInstance().getLogiraniKorisnik().InstruktorId);
+
+            // ListView item on click listener
+            setListOnClickListener();
+        } else {
+            // Offline data
+            getAllOfflineVoznje();
+            setListOnClickListenerForOffline();
+        }
     }
 
 

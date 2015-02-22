@@ -54,14 +54,6 @@ public class SyncStatusAdapter extends BaseAdapter {
 
        viewHolder.txtDate.setText(voznjaList.get(position).getDate());
        viewHolder.txtName.setText(voznjaList.get(position).getIme() +" "+voznjaList.get(position).getPrezime());
-
-        if (voznjaList.get(position).getStatus() == 1){
-            viewHolder.txtStatus.setText("Zavrseno..");
-        }
-        else
-        {
-            viewHolder.txtStatus.setText("U toku..");
-        }
         return convertView;
     }
 

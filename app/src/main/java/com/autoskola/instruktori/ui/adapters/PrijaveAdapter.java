@@ -139,7 +139,7 @@ public class PrijaveAdapter extends BaseAdapter {
             @Override
             public void success(com.autoskola.instruktori.services.model.Prijava prijava, retrofit.client.Response response) {
                 Log.d("Update prijave - success:", "");
-                 fragmentPrijave.getInstruktor();
+                 fragmentPrijave.getPrijave();
             }
 
             @Override

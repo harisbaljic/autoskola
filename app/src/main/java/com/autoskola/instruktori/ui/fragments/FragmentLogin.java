@@ -18,6 +18,7 @@ import com.autoskola.instruktori.ui.activities.MainActivity;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -97,6 +98,24 @@ public class FragmentLogin extends Activity {
                     FragmentLogin.this.finish();
                     Intent intent = new Intent(FragmentLogin.this, MainActivity.class);
                     startActivity(intent);
+                }else
+                {
+                   runOnUiThread(new Runnable() {
+                       @Override
+                       public void run() {
+
+                           new SweetAlertDialog(FragmentLogin.this, SweetAlertDialog.WARNING_TYPE)
+                                   .setTitleText("Greska.")
+                                   .setContentText("Ne postoji instruktor sa unesenim podacima.")
+                                   .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                       @Override
+                                       public void onClick(SweetAlertDialog sDialog) {
+                                           sDialog.dismissWithAnimation();
+                                       }
+                                   })
+                                   .show();
+                       }
+                   });
                 }
             }
 
@@ -112,6 +131,7 @@ public class FragmentLogin extends Activity {
 
     public void saveKorisnikToPrefs(Korisnik korisnik) {
         SharedPreferences.Editor editor = getSharedPreferences("AppSharedPereferences", Context.MODE_PRIVATE).edit();
+        System.out.println("Json:"+korisnik.convertToJson());
         editor.putString("korisnik", korisnik.convertToJson());
         editor.commit();
     }

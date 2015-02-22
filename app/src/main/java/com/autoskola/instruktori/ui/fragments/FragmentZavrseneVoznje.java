@@ -46,40 +46,11 @@ public class FragmentZavrseneVoznje extends Fragment {
 
     }
 
-    public void getInstruktorId(String korisnikId) {
-        // Set endpoint
-        RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint("http://projekt001.app.fit.ba/autoskola")
-                .build();
-
-        // Generate service
-        PrijavaWebService service = restAdapter.create(PrijavaWebService.class);
-
-        // Callback
-        Callback<com.autoskola.instruktori.services.model.Prijava> callback = new Callback<com.autoskola.instruktori.services.model.Prijava>() {
-            @Override
-            public void success(com.autoskola.instruktori.services.model.Prijava prijava, retrofit.client.Response response) {
-                if (prijava != null) {
-                    // Get zavrsene voznje
-                    getZavrseneVoznje(String.valueOf(prijava.getInstruktorId()));
-                }
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                Log.d("GPS Instruktor - fail:", error.toString());
-            }
-        };
-
-        // GET request
-        service.getInstruktorId(korisnikId, callback);
-    }
-
     @Override
     public void onResume() {
         super.onResume();
-        // Instruktor id
-        getInstruktorId(ApplicationContext.getInstance().getLogiraniKorisnik().getKorisnikId() + "");
+
+        getZavrseneVoznje(ApplicationContext.getInstance().getLogiraniKorisnik().InstruktorId);
 
         // Set on click listener
         setListener();

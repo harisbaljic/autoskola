@@ -8,7 +8,7 @@ import com.google.gson.Gson;
 public class Korisnik {
 
     public String Ime,Prezime,KorisnickoIme,Email,Adresa,Grad,LozinkaHash;
-    public String KorisnikId;
+    public String KorisnikId,InstruktorId;
 
     public Korisnik(String ime, String prezime, String korisnickoIme, String email, String adresa, String grad, String lozinkaHash, String korisnikId){
 
@@ -20,6 +20,7 @@ public class Korisnik {
         Adresa = adresa;
         Grad  = grad;
         LozinkaHash = lozinkaHash;
+
     }
 
     public String getIme() {
@@ -86,6 +87,13 @@ public class Korisnik {
         KorisnikId = korisnikId;
     }
 
+    public String getInstruktorId() {
+        return InstruktorId;
+    }
+
+    public void setInstruktorId(String instruktorId) {
+        InstruktorId = instruktorId;
+    }
 
     public String convertToJson() {
         Gson gson = new Gson();
