@@ -35,13 +35,12 @@ public class FragmentZavrseneVoznjeDetalji extends DialogFragment {
     private GoogleMap googleMap;
     private static View view;
 
-    public static final FragmentZavrseneVoznjeDetalji newInstance(String voznjaId)
-    {
+    public static final FragmentZavrseneVoznjeDetalji newInstance(String voznjaId) {
         FragmentZavrseneVoznjeDetalji fragment = new FragmentZavrseneVoznjeDetalji();
         Bundle bundle = new Bundle();
-        bundle.putString("voznjaId",voznjaId);
+        bundle.putString("voznjaId", voznjaId);
         fragment.setArguments(bundle);
-        return fragment ;
+        return fragment;
     }
 
 
@@ -59,7 +58,7 @@ public class FragmentZavrseneVoznjeDetalji extends DialogFragment {
         /* map is already there, just return view as it is */
         }
 
-        Button btnClose = (Button)view.findViewById(R.id.btnClose);
+        Button btnClose = (Button) view.findViewById(R.id.btnClose);
         btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -75,7 +74,7 @@ public class FragmentZavrseneVoznjeDetalji extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String voznjaId  = getArguments().getString("voznjaId");
+        String voznjaId = getArguments().getString("voznjaId");
 
         // Get gps map info
         getMapDetails(voznjaId);
@@ -99,7 +98,7 @@ public class FragmentZavrseneVoznjeDetalji extends DialogFragment {
 
     /**
      * function to load map. If map is not created it will create it for you
-     * */
+     */
     private void initilizeMap() {
         if (googleMap == null) {
             googleMap = ((MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.map_detalji)).getMap();
@@ -115,7 +114,7 @@ public class FragmentZavrseneVoznjeDetalji extends DialogFragment {
         }
     }
 
-    private void getMapDetails (String voznjaId){
+    private void getMapDetails(String voznjaId) {
 
         // Set endpoint
         RestAdapter restAdapter = new RestAdapter.Builder()
@@ -130,27 +129,25 @@ public class FragmentZavrseneVoznjeDetalji extends DialogFragment {
             @Override
             public void success(List<GpsInfo> gpsList, Response response) {
                 Log.d("GET Gps info - success:", "");
-
                 List<LatLng> locations = new ArrayList<LatLng>();
-                for(int i=0;i<gpsList.size();i++){
-                    locations.add(new LatLng(Double.valueOf(gpsList.get(i).getLatitude()),Double.valueOf(gpsList.get(i).getLongitude())));
-
+                for (int i = 0; i < gpsList.size(); i++) {
+                    locations.add(new LatLng(Double.valueOf(gpsList.get(i).getLatitude()), Double.valueOf(gpsList.get(i).getLongitude())));
                 }
-                MapHelper.getInstance().drawMapRoute(locations,googleMap,getActivity());
+                MapHelper.getInstance().drawMapRoute(locations, googleMap, getActivity(), true);
             }
 
             @Override
             public void failure(RetrofitError error) {
-                Log.d("GET Gps info - fail:",error.toString());
+                Log.d("GET Gps info - fail:", error.toString());
             }
         };
 
         // GET request
-        service.getGpsInfo(voznjaId,callback);
+        service.getGpsInfo(voznjaId, callback);
 
     }
 
-    private void getComments (String voznjaId){
+    private void getComments(String voznjaId) {
 
         // Set endpoint
         RestAdapter restAdapter = new RestAdapter.Builder()
@@ -168,12 +165,12 @@ public class FragmentZavrseneVoznjeDetalji extends DialogFragment {
                 Log.d("GET comments - success:", "");
 
                 // Draw comments on map
-                MapHelper.getInstance().drawCommentsOnMap(commentList,googleMap,getActivity());
+                MapHelper.getInstance().drawCommentsOnMap(commentList, googleMap, getActivity());
             }
 
             @Override
             public void failure(RetrofitError error) {
-                Log.d("GET comments - fail:",error.toString());
+                Log.d("GET comments - fail:", error.toString());
             }
         };
 

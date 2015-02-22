@@ -24,10 +24,11 @@ public class MapHelper {
 
     /**
      * Gps location test
+     *
      * @return
      */
-    public static final LatLng SARAJEVO = new LatLng(43.856259,18.413076);
-    public static final LatLng MOSTAR = new LatLng(43.342273,17.812754);
+    public static final LatLng SARAJEVO = new LatLng(43.856259, 18.413076);
+    public static final LatLng MOSTAR = new LatLng(43.342273, 17.812754);
 
     public static MapHelper getInstance() {
         return ourInstance;
@@ -37,7 +38,7 @@ public class MapHelper {
 
     }
 
-    public void setMapToLocation(LatLng location,GoogleMap map){
+    public void setMapToLocation(LatLng location, GoogleMap map) {
 
         // Showing the current location in Google Map
         map.moveCamera(CameraUpdateFactory.newLatLng(location));
@@ -46,7 +47,7 @@ public class MapHelper {
         map.animateCamera(CameraUpdateFactory.zoomTo(GlobalConfig.DEFAULT_MAP_ZOOM));
     }
 
-    public void setMapToLocation(double lat , double lng,GoogleMap map){
+    public void setMapToLocation(double lat, double lng, GoogleMap map) {
         // Creating a LatLng object for the current location
         LatLng latLng = new LatLng(lat, lng);
 
@@ -58,59 +59,64 @@ public class MapHelper {
 
     }
 
-    public void drawMapRoute (final List<LatLng> routes,final GoogleMap googleMap, Activity context){
+    public void drawMapRoute(final List<LatLng> routes, final GoogleMap googleMap, Activity context, final boolean setLocationToStart) {
 
-        if (googleMap != null && context!=null) {
+        if (googleMap != null && context != null) {
             context.runOnUiThread(new Runnable() {
-                    @Override
+                @Override
 
-                    public void run() {
-                        if (routes.size()>0) {
-                            // Add map makers for start{
-                            googleMap.addMarker(new MarkerOptions().position(routes.get(0))
-                                    .title("Pocetak")).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.map_start));
+                public void run() {
+                    if (routes.size() > 0) {
+                        // Add map makers for start{
+                        googleMap.addMarker(new MarkerOptions().position(routes.get(0))
+                                .title("Pocetak")).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.map_start));
 
-                            // Add map makers for end
-                                googleMap.addMarker(new MarkerOptions().position(routes.get(routes.size()-1))
-                                        .title("Kraj")).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.map_finish));
+                        // Add map makers for end
+                        googleMap.addMarker(new MarkerOptions().position(routes.get(routes.size() - 1))
+                                .title("Kraj")).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.map_finish));
 
-                            // Set map to location
-                            setMapToLocation(routes.get(0).latitude,routes.get(0).longitude,googleMap);
-                        }
-
-                        // Add lines on map
-                        googleMap.addPolyline(new PolylineOptions()
-                                .addAll(routes)
-                                .width(5)
-                                .color(Color.RED));
+                        if (setLocationToStart)
+                            // Set map location to start
+                            setMapToLocation(routes.get(0).latitude, routes.get(0).longitude, googleMap);
+                        else
+                            // Set map location to end
+                            setMapToLocation(routes.get(routes.size() - 1).latitude, routes.get(routes.size() - 1).longitude, googleMap);
 
                     }
-                });
+
+                    // Add lines on map
+                    googleMap.addPolyline(new PolylineOptions()
+                            .addAll(routes)
+                            .width(5)
+                            .color(Color.RED));
+
+                }
+            });
 
         }
     }
 
-    public void drawCommentOnMap (final Komentar komentar,final GoogleMap googleMap, final Activity context){
+    public void drawCommentOnMap(final Komentar komentar, final GoogleMap googleMap, final Activity context) {
 
         if (googleMap != null) {
             context.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                        googleMap.addMarker(new MarkerOptions().position(new LatLng(Double.valueOf(komentar.getLtd()),Double.valueOf(komentar.getLng())))
-                                .title(komentar.getOpis())).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.map_comment));
+                    googleMap.addMarker(new MarkerOptions().position(new LatLng(Double.valueOf(komentar.getLtd()), Double.valueOf(komentar.getLng())))
+                            .title(komentar.getOpis())).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.map_comment));
 
                 }
             });
         }
     }
 
-    public void drawCommentsOnMap (final List<Komentar> list,final GoogleMap googleMap, final Activity context){
+    public void drawCommentsOnMap(final List<Komentar> list, final GoogleMap googleMap, final Activity context) {
         if (googleMap != null) {
             context.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    for (Komentar  komentar:list) {
-                        if (komentar.getLng() != null && komentar.getLtd() != null && komentar.getLtd().toString().length()>0 && komentar.getLng().toString().length()>0) {
+                    for (Komentar komentar : list) {
+                        if (komentar.getLng() != null && komentar.getLtd() != null && komentar.getLtd().toString().length() > 0 && komentar.getLng().toString().length() > 0) {
                             googleMap.addMarker(new MarkerOptions().position(new LatLng(Double.valueOf(komentar.getLtd()), Double.valueOf(komentar.getLng())))
                                     .title(komentar.getOpis())).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.map_comment));
                         }
