@@ -133,7 +133,7 @@ public class FragmentMapLive extends Fragment implements GpsResponseHandler,View
 
                       }
 
-                      MapHelper.getInstance().drawMapRoute(locations,googleMap,activity,false);
+                      MapHelper.getInstance().drawMapRoute(locations,googleMap,activity,true);
 
                   }
               }).start();
