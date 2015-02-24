@@ -126,7 +126,6 @@ public class FragmentMapLive extends Fragment implements GpsResponseHandler,View
                               .equalTo("voznjaId", GpsTask.getInstance().getAktivnaPrijava(activity.getBaseContext()).VoznjaId)
                               .findAll();
 
-
                       List<LatLng> locations = new ArrayList<LatLng>();
                       for(int i=0;i<gpsList.size();i++){
                           locations.add(new LatLng(Double.valueOf(gpsList.get(i).getLatitude()),Double.valueOf(gpsList.get(i).getLongitude())));

@@ -16,13 +16,13 @@ import java.util.List;
 /**
  * Created by haris on 1/31/15.
  */
-public class SyncStatusAdapter extends BaseAdapter {
+public class VoznjeOfflineAdapter extends BaseAdapter {
 
     private Activity activity;
     private List<Voznja> voznjaList;
 
 
-    public SyncStatusAdapter(Activity activity, List<Voznja> voznjeList) {
+    public VoznjeOfflineAdapter(Activity activity, List<Voznja> voznjeList) {
         super();
         this.activity = activity;
         this.voznjaList = voznjeList;

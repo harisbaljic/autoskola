@@ -60,7 +60,7 @@ public class GpsTask {
     private String LOCATION_PROVIDER = LocationManager.NETWORK_PROVIDER;
 
     // GPS - Network state listener
-    public GpsResponseHandler communicatorInterface;
+    public GpsResponseHandler communicatorInterface; // Interface for MainActivity
     public GpsResponseHandler communicatorInterfaceMap;
 
     /**
@@ -179,10 +179,6 @@ public class GpsTask {
         return location;
     }
 
-//    public void showMessage(String message) {
-//        Toast.makeText((Context) this.communicatorInterface, message, Toast.LENGTH_SHORT).show();
-//    }
-
     // Save aktivna prijava to preference
     public void startGPSTask(Prijava prijava, Context context) {
         SharedPreferences.Editor editor = context.getSharedPreferences("AppSharedPereferences", Context.MODE_PRIVATE).edit();
@@ -240,14 +236,11 @@ public class GpsTask {
                     komentar.setIsSynced(DataSyncState.SYNC_YES.ordinal());
                 }
                 realm.commitTransaction();
-
-                //GpsTask.getInstance().showMessage("Comment synced successfuly");
             }
 
             @Override
             public void failure(RetrofitError error) {
                 System.out.println("POST Comments - fail:" + error);
-                //GpsTask.getInstance().communicatorInterface.onGpsResponse(GpsResponseTypes.GPS_SYNC_FAIL);
             }
         };
 
@@ -262,13 +255,9 @@ public class GpsTask {
                 RealmResults<Komentar> commentList = realm.where(Komentar.class)
                         .equalTo("isSynced", DataSyncState.SYNC_NO.ordinal())
                         .findAll();
-                System.out.println("Broj komentara COMMENT_SYNC_NO:" + commentList.size());
 
                 List<Komentar> finalCommentList = new ArrayList<>();
-                //realm.beginTransaction();
                 for (int i = 0; i < commentList.size(); i++) {
-
-
                     Komentar komentar = new Komentar();
                     komentar.setLng(commentList.get(i).getLng());
                     komentar.setLtd(commentList.get(i).getLtd());
@@ -276,15 +265,9 @@ public class GpsTask {
                     komentar.setOpis(commentList.get(i).getOpis());
                     komentar.setVoznjaId(commentList.get(i).getVoznjaId());
                     finalCommentList.add(komentar);
-
-                    // Update local comment object
-                    // commentList.get(i).setIsSynced(CommentSyncState.COMMENT_SYNC_IN_PROGRESS.ordinal());
-
-                    System.out.println("for petlja");
                 }
-                //realm.commitTransaction();
                 postCommentData(finalCommentList, context);
-                System.out.println("post ide prije");
+
             }
         }).start();
     }
@@ -346,9 +329,8 @@ public class GpsTask {
         // Callback
         Callback<List<GpsInfo>> callback = new Callback<List<GpsInfo>>() {
             @Override
-            public void success(List<GpsInfo> aBoolean, Response response) {
+            public void success(List<GpsInfo> list, Response response) {
                 System.out.println("POST GpsInfo - success");
-                // Remove comments locally
                 Realm realm = Realm.getInstance(context);
                 RealmResults<GpsInfo> commentList = realm.where(GpsInfo.class)
                         .equalTo("isSynced", DataSyncState.SYNC_NO.ordinal()).findAll();
@@ -462,7 +444,6 @@ public class GpsTask {
             // Save to db
             realm.commitTransaction();
         }
-
     }
 
     private void postVoznja(final VoznjaSimple voznja, final Context context) {
@@ -511,6 +492,7 @@ public class GpsTask {
                         //.equalTo("status", 1)
                         .equalTo("isSynced", DataSyncState.SYNC_NO.ordinal())
                         .findAll();
+
                 for (Voznja object : voznjeList) {
                     VoznjaSimple simple = new VoznjaSimple();
                     simple.setVoznjaId(object.getVoznjaId());

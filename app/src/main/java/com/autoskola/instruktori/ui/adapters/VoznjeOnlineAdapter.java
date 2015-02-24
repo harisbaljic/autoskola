@@ -16,13 +16,13 @@ import java.util.List;
 /**
  * Created by The Boss on 18.1.2015.
  */
-public class VoznjeAdapter extends BaseAdapter {
+public class VoznjeOnlineAdapter extends BaseAdapter {
 
     private Activity activity;
     private List<Prijava> prijaveList;
 
 
-    public VoznjeAdapter(Activity activity, List<Prijava> prijaveList) {
+    public VoznjeOnlineAdapter(Activity activity, List<Prijava> prijaveList) {
         super();
         this.activity = activity;
         this.prijaveList = prijaveList;
@@ -61,20 +61,11 @@ public class VoznjeAdapter extends BaseAdapter {
             viewHolder.kandidat.setText(prijaveList.get(position).Ime +" " + prijaveList.get(position).Prezime);
         }
 
-        if (prijaveList.get(position).VrijemeVoznje !=null)
-        {
-         //   viewHolder.vrijeme.setText(prijaveList.get(position).VrijemeVoznje.toString());
-        }
-
             viewHolder.datum.setText(prijaveList.get(position).getDatumVoznje());
 
         GpsTask.getInstance().saveVoznjaOffline(prijaveList.get(position),activity);
         return convertView;
     }
-
-
-
-
 
     @Override
     public int getCount() {

@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.autoskola.instruktori.R;
-import com.autoskola.instruktori.ui.adapters.SyncStatusAdapter;
+import com.autoskola.instruktori.ui.adapters.VoznjeOfflineAdapter;
 import com.autoskola.instruktori.services.model.Prijava;
 import com.autoskola.instruktori.services.model.Voznja;
 
@@ -27,7 +27,7 @@ public class FragmentSyncStatus extends Fragment {
 
     private ListView list;
     private List<Prijava> items = new ArrayList<Prijava>();
-    private SyncStatusAdapter adapter;
+    private VoznjeOfflineAdapter adapter;
     private ProgressDialog mProgressDialog;
 
     @Override
@@ -74,7 +74,7 @@ public class FragmentSyncStatus extends Fragment {
                         .notEqualTo("voznjaId", "")
                         .findAll();
 
-                adapter = new SyncStatusAdapter(getActivity(), voznjaList);
+                adapter = new VoznjeOfflineAdapter(getActivity(), voznjaList);
 
                 getActivity().runOnUiThread(new Runnable() {
                     @Override

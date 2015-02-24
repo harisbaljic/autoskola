@@ -11,7 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.autoskola.instruktori.R;
-import com.autoskola.instruktori.ui.adapters.VoznjeAdapter;
+import com.autoskola.instruktori.ui.adapters.VoznjeOnlineAdapter;
 import com.autoskola.instruktori.helpers.ApplicationContext;
 import com.autoskola.instruktori.services.PrijavaWebService;
 import com.autoskola.instruktori.services.model.Prijava;
@@ -31,7 +31,7 @@ public class FragmentZavrseneVoznje extends Fragment {
 
     private ListView list;
     private List<Prijava> items = new ArrayList<Prijava>();
-    private VoznjeAdapter adapter;
+    private VoznjeOnlineAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -96,7 +96,7 @@ public class FragmentZavrseneVoznje extends Fragment {
             public void success(List<com.autoskola.instruktori.services.model.Prijava> prijave, Response response) {
                 Log.d("GET Aktivne prijave - success:", "");
                 items = new ArrayList<>(prijave);
-                adapter = new VoznjeAdapter(getActivity(), items);
+                adapter = new VoznjeOnlineAdapter(getActivity(), items);
                 list.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
             }

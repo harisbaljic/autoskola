@@ -10,8 +10,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.autoskola.instruktori.R;
-import com.autoskola.instruktori.ui.adapters.SyncStatusAdapter;
-import com.autoskola.instruktori.ui.adapters.VoznjeAdapter;
+import com.autoskola.instruktori.ui.adapters.VoznjeOfflineAdapter;
+import com.autoskola.instruktori.ui.adapters.VoznjeOnlineAdapter;
 import com.autoskola.instruktori.gps.GpsTask;
 import com.autoskola.instruktori.helpers.ApplicationContext;
 import com.autoskola.instruktori.helpers.NetworkConnectivity;
@@ -39,8 +39,8 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
     private List<Voznja> itemsOffline = new ArrayList<Voznja>();
     private TextView txtErrorLog;
 
-    private VoznjeAdapter adapter;
-    private SyncStatusAdapter mOfflineObjectAdapter;
+    private VoznjeOnlineAdapter mOnlineAdapter;
+    private VoznjeOfflineAdapter mOfflineAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,13 +59,12 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
         if (NetworkConnectivity.isConnected(getActivity())) {
             // Get all aktivne prijave
             getAktivnePrijave(ApplicationContext.getInstance().getLogiraniKorisnik().InstruktorId);
-
-            // ListView item on click listener
-            setListOnClickListener();
-        } else {
+            setOnClickListenerForOnlineVoznje();
+        } else
+        {
             // Offline data
             getAllOfflineVoznje();
-            setListOnClickListenerForOffline();
+            setOnClickListenerForOfflineVoznje();
         }
     }
 
@@ -83,8 +82,8 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mOfflineObjectAdapter = new SyncStatusAdapter(getActivity(), voznjaList);
-                        list.setAdapter(mOfflineObjectAdapter);
+                        mOfflineAdapter = new VoznjeOfflineAdapter(getActivity(), voznjaList);
+                        list.setAdapter(mOfflineAdapter);
                     }
                 });
 
@@ -119,9 +118,9 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
                 Log.d("GET Aktivne prijave - success:", "");
                 txtErrorLog.setVisibility(View.INVISIBLE);
                 items = new ArrayList<>(prijave);
-                adapter = new VoznjeAdapter(getActivity(), items);
-                list.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
+                mOnlineAdapter = new VoznjeOnlineAdapter(getActivity(), items);
+                list.setAdapter(mOnlineAdapter);
+                mOnlineAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -137,7 +136,7 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
     }
 
 
-    private void setListOnClickListener() {
+    private void setOnClickListenerForOnlineVoznje() {
         this.list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(final AdapterView<?> parent, View view, final int position, long id) {
@@ -169,7 +168,7 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
                                     // Start gps task
                                     Prijava prijava = items.get(position);
                                     GpsTask.getInstance().startGPSTask(prijava, parent.getContext());
-                                    adapter.notifyDataSetChanged();
+                                    mOnlineAdapter.notifyDataSetChanged();
 
                                 }
                             })
@@ -205,7 +204,7 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
 
                                         // Stop gps task
                                         GpsTask.getInstance().stopGpsTask(parent.getContext());
-                                        adapter.notifyDataSetChanged();
+                                        mOnlineAdapter.notifyDataSetChanged();
 
 
                                         // Try sync data with server
@@ -242,7 +241,7 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
                                         // Start gps task
                                         Prijava prijava = items.get(position);
                                         GpsTask.getInstance().startGPSTask(prijava, parent.getContext());
-                                        adapter.notifyDataSetChanged();
+                                        mOnlineAdapter.notifyDataSetChanged();
 
                                     }
                                 })
@@ -257,7 +256,7 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
     }
 
 
-    private void setListOnClickListenerForOffline() {
+    private void setOnClickListenerForOfflineVoznje() {
         this.list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(final AdapterView<?> parent, View view, final int position, long id) {
@@ -296,7 +295,7 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
 
 
                                     GpsTask.getInstance().startGPSTask(selectedPrijava, parent.getContext());
-                                    mOfflineObjectAdapter.notifyDataSetChanged();
+                                    mOfflineAdapter.notifyDataSetChanged();
 
                                 }
                             })
@@ -429,7 +428,6 @@ public class FragmentDodajVoznju extends android.support.v4.app.Fragment {
             public void success(VoznjaSimple prijave, Response response) {
                 Log.d("Update voznje - success:", "");
                 refreshAktivnePrijave();
-
             }
 
             @Override

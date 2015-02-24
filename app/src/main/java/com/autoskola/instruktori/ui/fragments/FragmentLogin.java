@@ -15,9 +15,6 @@ import com.autoskola.instruktori.services.PrijavaWebService;
 import com.autoskola.instruktori.services.model.Korisnik;
 import com.autoskola.instruktori.ui.activities.MainActivity;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import retrofit.Callback;
 import retrofit.RestAdapter;
@@ -66,17 +63,17 @@ public class FragmentLogin extends Activity {
 
     }
 
-    static String sha1(String input) throws NoSuchAlgorithmException {
-        MessageDigest mDigest = MessageDigest.getInstance("SHA1");
-        byte[] result = mDigest.digest(input.getBytes());
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < result.length; i++) {
-            sb.append(Integer.toString((result[i] & 0xff) + 0x100, 16)
-                    .substring(1));
-        }
-        Log.d("test", sb.toString());
-        return sb.toString();
-    }
+//    static String sha1(String input) throws NoSuchAlgorithmException {
+//        MessageDigest mDigest = MessageDigest.getInstance("SHA1");
+//        byte[] result = mDigest.digest(input.getBytes());
+//        StringBuffer sb = new StringBuffer();
+//        for (int i = 0; i < result.length; i++) {
+//            sb.append(Integer.toString((result[i] & 0xff) + 0x100, 16)
+//                    .substring(1));
+//        }
+//        Log.d("test", sb.toString());
+//        return sb.toString();
+//    }
 
     private void login(final String korIme, String hash) {
         // Set endpoint
@@ -103,7 +100,6 @@ public class FragmentLogin extends Activity {
                    runOnUiThread(new Runnable() {
                        @Override
                        public void run() {
-
                            new SweetAlertDialog(FragmentLogin.this, SweetAlertDialog.WARNING_TYPE)
                                    .setTitleText("Greska.")
                                    .setContentText("Ne postoji instruktor sa unesenim podacima.")

@@ -251,6 +251,7 @@ public class MainActivity extends FragmentActivity  implements GpsResponseHandle
                 .commit();
 
     }
+
     @Override
     public void onGpsResponse(GpsResponseTypes responseType) {
         if (responseType == GpsResponseTypes.WI_FI_CONNECTION || responseType == GpsResponseTypes.MOBILE_CONNECTION ){

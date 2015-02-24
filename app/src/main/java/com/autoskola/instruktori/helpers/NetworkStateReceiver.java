@@ -15,6 +15,7 @@ public class NetworkStateReceiver extends BroadcastReceiver{
     public void onReceive(Context context, Intent intent) {
         if(GpsTask.getInstance().communicatorInterface!=null){
             if(NetworkConnectivity.isConnected(context)){
+
                 if(NetworkConnectivity.isConnectedWifi(context)){
                     System.out.println("Connected to Wi-Fi");
                     GpsTask.getInstance().communicatorInterface.onGpsResponse(GpsResponseTypes.WI_FI_CONNECTION);
